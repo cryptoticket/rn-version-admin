@@ -7,6 +7,10 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "classnames": "^2.2.6",
+    "dotenv": "^8.2.0",
+    "fastify": "^2.12.0",
+    "fastify-plugin": "^1.6.0",
+    "mongoose": "^5.8.11",
     "primeflex": "^1.0.0",
     "primeicons": "^2.0.0",
     "primereact": "^3.4.0",
@@ -14,13 +18,15 @@
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.1",
-    "react-transition-group": "^4.3.0"
+    "react-transition-group": "^4.3.0",
+    "validator": "^12.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "frontend:start": "react-scripts start",
+    "frontend:build": "react-scripts build",
+    "frontend:test": "react-scripts test",
+    "frontend:eject": "react-scripts eject",
+    "backend:live": "./node_modules/.bin/nodemon backend/server/server.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -36,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
