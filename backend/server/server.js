@@ -1,6 +1,8 @@
 // read ENV variables
 require('dotenv').config();
 
+const oauthPlugin = require('fastify-oauth2');
+
 // initialize fastify instance
 const fastify = require('fastify')({ logger: true });
 
@@ -9,7 +11,25 @@ fastify.register(require('../plugins/mongo-connector'), {
 	url: process.env.MONGO_DB_CONNECTION
 });
 
+// initialize OAuth
+fastify.register(oauthPlugin, {
+	name: 'googleOAuth2',
+	scope: ['email'],
+	credentials: {
+	  client: {
+		id: process.env.OAUTH_GOOGLE_CLIENT_ID,
+		secret: process.env.OAUTH_GOOGLE_CLIENT_SECRET
+	  },
+	  auth: oauthPlugin.GOOGLE_CONFIGURATION
+	},
+	// register a fastify url to start the redirect flow
+	startRedirectPath: '/api/v1/auth/google',
+	// google redirects here after the user login
+	callbackUri: `${process.env.API_URL}/api/v1/auth/google/callback`
+});
+
 // attach APIs
+fastify.register(require('../routes/v1/auth'), { prefix: '/api/v1' }); // auth API
 fastify.register(require('../routes/v1/users'), { prefix: '/api/v1' }); // users API
   
 // default route
