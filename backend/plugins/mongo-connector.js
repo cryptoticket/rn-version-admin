@@ -14,7 +14,8 @@ async function mongoConnector(fastify, options) {
 	// create db connection
 	const db = await mongoose.createConnection(url, { 
 		useNewUrlParser: true, 
-		useUnifiedTopology: true 
+		useUnifiedTopology: true,
+		useFindAndModify: false
 	});
 	// attach mongo to fastify
 	fastify.decorate('mongo', db);
