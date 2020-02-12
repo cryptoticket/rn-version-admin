@@ -53,6 +53,15 @@ async function routes(fastify, options) {
 	 */
 	fastify.get('/users', {
 		schema: {
+			querystring: {
+				type: 'object',
+				properties: {
+					page: {
+						type: 'number',
+						default: 0
+					}
+				}
+			},
 			response: {
 				200: {
 					type: 'array',
@@ -69,8 +78,16 @@ async function routes(fastify, options) {
 				}
 			}
 		},
+		onSend: async (request, reply, payload) => {
+			const totalCount = await User.count();
+			const pageLast = totalCount % +process.env.ITEMS_PER_PAGE === 0 ? Math.floor(totalCount / +process.env.ITEMS_PER_PAGE) - 1 : Math.floor(totalCount / +process.env.ITEMS_PER_PAGE);
+			reply.header('X-Total-Count', totalCount);
+			reply.header('X-Limit', process.env.ITEMS_PER_PAGE);
+			reply.header('X-Page', request.query.page);
+			reply.header('X-Page-Last', pageLast);
+		}
 	}, async function (request, reply) {
-		const users = await User.find();
+		const users = await User.find().skip(+process.env.ITEMS_PER_PAGE * request.query.page).limit(+process.env.ITEMS_PER_PAGE);
 		reply.send(users);
 	});
 
