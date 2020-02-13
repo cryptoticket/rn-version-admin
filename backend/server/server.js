@@ -7,9 +7,10 @@ const oauthPlugin = require('fastify-oauth2');
 const fastify = require('fastify')({ logger: true });
 
 // connect to Mongo DB
-fastify.register(require('../plugins/mongo-connector'), {
-	url: process.env.MONGO_DB_CONNECTION
-});
+fastify.register(require('../plugins/mongo-connector'), { url: process.env.MONGO_DB_CONNECTION });
+
+// run DB migration with initial data
+fastify.register(require('../plugins/initial-migration'));
 
 // initialize OAuth
 fastify.register(oauthPlugin, {
