@@ -34,14 +34,17 @@ async function routes(fastify, options) {
 				}
 			}
 		},
-		preValidation: async (request, reply) => {
-			// check that email is not used
-			const count = await User.count({email: request.body.email});
-			if(count > 0) {
-				reply.code(400);
-				throw new Error('Email is already used');
+		preValidation: [
+			fastify.authenticate,
+			async (request, reply) => {
+				// check that email is not used
+				const count = await User.countDocuments({email: request.body.email});
+				if(count > 0) {
+					reply.code(400);
+					throw new Error('Email is already used');
+				}
 			}
-		}
+		],
 	}, async function (request, reply) {
 		const user = new User(request.body);
 		await user.save();
@@ -78,8 +81,11 @@ async function routes(fastify, options) {
 				}
 			}
 		},
+		preValidation: [
+			fastify.authenticate
+		],
 		onSend: async (request, reply, payload) => {
-			const totalCount = await User.count();
+			const totalCount = await User.countDocuments();
 			const pageLast = totalCount % +process.env.ITEMS_PER_PAGE === 0 ? Math.floor(totalCount / +process.env.ITEMS_PER_PAGE) - 1 : Math.floor(totalCount / +process.env.ITEMS_PER_PAGE);
 			reply.header('X-Total-Count', totalCount);
 			reply.header('X-Limit', process.env.ITEMS_PER_PAGE);
@@ -129,24 +135,27 @@ async function routes(fastify, options) {
 				}
 			}
 		},
-		preValidation: async (request, reply) => {
-			// check that user exists
-			const user = await User.findById(request.params.id);
-			if(!user) {
-				reply.code(400);
-				throw new Error('User not found');
-			}
-			// check that email is not used
-			const users = await User.find({email: request.body.email});
-			// if user with email found
-			if(users.length === 1) {
-				// if it is not the currently updated user then throw error
-				if(users[0].id !== request.params.id) {
+		preValidation: [
+			fastify.authenticate,
+			async (request, reply) => {
+				// check that user exists
+				const user = await User.findById(request.params.id);
+				if(!user) {
 					reply.code(400);
-					throw new Error('Email is already used');
+					throw new Error('User not found');
+				}
+				// check that email is not used
+				const users = await User.find({email: request.body.email});
+				// if user with email found
+				if(users.length === 1) {
+					// if it is not the currently updated user then throw error
+					if(users[0].id !== request.params.id) {
+						reply.code(400);
+						throw new Error('Email is already used');
+					}
 				}
 			}
-		}
+		], 
 	}, async function (request, reply) {
 		const user = await User.findOneAndUpdate({_id: request.params.id}, request.body, {new: true});
 		reply.send(user);
@@ -173,14 +182,17 @@ async function routes(fastify, options) {
 				}
 			}
 		},
-		preValidation: async (request, reply) => {
-			// check that user exists
-			const user = await User.findById(request.params.id);
-			if(!user) {
-				reply.code(400);
-				throw new Error('User not found');
+		preValidation: [
+			fastify.authenticate,
+			async (request, reply) => {
+				// check that user exists
+				const user = await User.findById(request.params.id);
+				if(!user) {
+					reply.code(400);
+					throw new Error('User not found');
+				}
 			}
-		}
+		], 
 	}, async function (request, reply) {
 		await User.deleteOne({_id: request.params.id});
 		reply.send();

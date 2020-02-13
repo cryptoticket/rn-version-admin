@@ -26,8 +26,8 @@ async function routes(fastify, options) {
 		const user = await User.findOne({email: resp.data.email});
 		if(!user) throw new Error('User with this email was not found');
 		// redirect user to home page with JWT in url
-		// TODO: !
-		reply.send({ access_token: token.access_token })
+		const jwtToken = fastify.jwt.sign({id: user.id, email: user.email});
+		reply.redirect(`/?token=${jwtToken}`);
 	});
 
 }

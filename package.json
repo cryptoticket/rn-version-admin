@@ -10,6 +10,7 @@
     "classnames": "^2.2.6",
     "dotenv": "^8.2.0",
     "fastify": "^2.12.0",
+    "fastify-jwt": "^1.2.1",
     "fastify-oauth2": "^3.0.0",
     "fastify-plugin": "^1.6.0",
     "mongoose": "^5.8.11",

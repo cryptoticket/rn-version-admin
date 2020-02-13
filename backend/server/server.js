@@ -28,6 +28,9 @@ fastify.register(oauthPlugin, {
 	callbackUri: `${process.env.API_URL}/api/v1/auth/google/callback`
 });
 
+// initialize JWT auth
+fastify.register(require('../plugins/jwt-auth'));
+
 // attach APIs
 fastify.register(require('../routes/v1/auth'), { prefix: '/api/v1' }); // auth API
 fastify.register(require('../routes/v1/users'), { prefix: '/api/v1' }); // users API
