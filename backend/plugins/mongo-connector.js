@@ -6,6 +6,7 @@ const fastifyPlugin = require('fastify-plugin');
 const mongoose = require('mongoose');
 
 // attach model schemas
+require('../db/models/bundle');
 require('../db/models/user');
 
 async function mongoConnector(fastify, options) {

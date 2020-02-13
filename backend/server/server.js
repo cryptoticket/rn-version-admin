@@ -34,6 +34,7 @@ fastify.register(require('../plugins/jwt-auth'));
 
 // attach APIs
 fastify.register(require('../routes/v1/auth'), { prefix: '/api/v1' }); // auth API
+fastify.register(require('../routes/v1/bundles'), { prefix: '/api/v1' }); // bundles API
 fastify.register(require('../routes/v1/users'), { prefix: '/api/v1' }); // users API
   
 // default route
