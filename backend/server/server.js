@@ -6,6 +6,9 @@ const oauthPlugin = require('fastify-oauth2');
 // initialize fastify instance
 const fastify = require('fastify')({ logger: true });
 
+// initialize plugin for file uploads
+fastify.register(require('fastify-multipart'));
+
 // connect to Mongo DB
 fastify.register(require('../plugins/mongo-connector'), { url: process.env.MONGO_DB_CONNECTION });
 

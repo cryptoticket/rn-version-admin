@@ -31,7 +31,12 @@ const bundleSchema = new Schema({
 	url: {
 		type: String,
 		required: true,
-		validate: [validator.isURL, 'Invalid URL']
+		validate: {
+			validator: function(value) {
+				return validator.isURL(value, {require_tld: false});
+			},
+			message: props => 'Invalid URL'
+		}
 	},
 	desc: {
 		type: String,

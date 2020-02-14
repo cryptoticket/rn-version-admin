@@ -24,3 +24,7 @@ yarn-error.log*
 
 # environment variables
 .env
+
+# ignore bundles
+backend/static/bundles
+!backend/static/bundles/.gitkeep
