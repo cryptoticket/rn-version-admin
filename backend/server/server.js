@@ -2,12 +2,16 @@
 require('dotenv').config();
 
 const oauthPlugin = require('fastify-oauth2');
+const path = require('path');
 
 // initialize fastify instance
 const fastify = require('fastify')({ logger: true });
 
 // initialize plugin for file uploads
-fastify.register(require('fastify-multipart'));
+fastify.register(require('fastify-multipart'), { 
+	addToBody: true,
+	sharedSchemaId: 'MultipartFileType' 
+});
 
 // connect to Mongo DB
 fastify.register(require('../plugins/mongo-connector'), { url: process.env.MONGO_DB_CONNECTION });
@@ -35,6 +39,14 @@ fastify.register(oauthPlugin, {
 // initialize JWT auth
 fastify.register(require('../plugins/jwt-auth'));
 
+// initialize AWS S3
+fastify.register(require('../plugins/aws-s3'));
+
+// initialize static files serving
+fastify.register(require('fastify-static'), {
+	root: path.join(__dirname, '../static/bundles')
+});
+
 // attach APIs
 fastify.register(require('../routes/v1/auth'), { prefix: '/api/v1' }); // auth API
 fastify.register(require('../routes/v1/bundles'), { prefix: '/api/v1' }); // bundles API
@@ -43,6 +55,28 @@ fastify.register(require('../routes/v1/users'), { prefix: '/api/v1' }); // users
 // default route
 fastify.get('/', function (request, reply) {
 	reply.send('React Native Version Admin works');
+});
+
+// serve static bundles
+fastify.get('/static/bundles/:version/:filename', {
+	schema: {
+		params: {
+			type: 'object',
+			required: ['filename'],
+			properties: {
+				version: {
+					type: 'string',
+					pattern: '^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$'
+				},
+				filename: {
+					type: 'string',
+					enum: ['android.bundle', 'ios.bundle']
+				}
+			}
+		}
+	}
+}, function (request, reply) {
+	reply.sendFile(`${request.params.version}/${request.params.filename}`);
 });
 
 // run the server

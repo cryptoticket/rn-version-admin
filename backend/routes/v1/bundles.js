@@ -4,6 +4,7 @@
 
 const fs = require('fs');
 const pump = require('pump');
+const Readable = require('stream').Readable;
 
 async function routes(fastify, options) {
 
@@ -15,6 +16,31 @@ async function routes(fastify, options) {
 	 */
 	fastify.post('/bundles', {
 		schema: {
+			body: {
+				type: 'object',
+				required: ['platform', 'storage', 'version', 'is_update_required', 'bundle'],
+				properties: {
+					platform: {
+						type: 'string',
+						enum: ['android', 'ios']
+					},
+					storage: {
+						type: 'string',
+						enum: ['file', 'aws_s3']
+					},
+					version: {
+						type: 'string',
+						pattern: '^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$'
+					},
+					is_update_required: {
+						type: 'boolean'
+					},
+					bundle: { 
+						type: 'array', 
+						items: 'MultipartFileType#' 
+					}
+				}
+			},
 			response: {
 				200: {
 					type: 'object',
@@ -47,72 +73,56 @@ async function routes(fastify, options) {
 			// check that request is multipart/form-data
 			if (!request.isMultipart()) {
 				reply.code(400).send(new Error('Request is not multipart'));
+				return;
 			}
 		}
-	}, function (request, reply) {
-		// TODO: upload local or s3
+	}, async function (request, reply) {
 		// TODO: check that bundles are available via local and s3 storage
 
-		let bundleData = {};
-		let isBundleUploaded = false;
-		let validationError = null;
+		// validate that bundle for this platform and version does not exist
+		const oldBundle = await Bundle.findOne({platform: request.body.platform, version: request.body.version});
+		if(oldBundle) {
+			reply.code(400).send({error: `Bundle is already uploaded for ${request.body.platform} platform and app version ${request.body.version}`});
+			return;
+		}
 
-		const getValidationError = async () => {
-			let err = null;
-			// validate request parameters
-			if(!bundleData['platform']) err = "platform field is required";
-			if(bundleData['platform'] && !['android', 'ios'].includes(bundleData['platform'])) err = "Invalid platform. Available values: android, ios";
-			if(!bundleData['storage']) err = "storage field is required";
-			if(bundleData['storage'] && !['file', 'aws_s3'].includes(bundleData['storage'])) err = "Invalid storage. Available values: file, aws_s3";
-			if(!bundleData['version']) err = "version field is required";
-			if(bundleData['version'] && !RegExp(/^(\d+\.)?(\d+\.)?(\*|\d+)$/).test(bundleData['version'])) err = 'Invalid semver version format';
-			if(!bundleData['is_update_required']) err = 'is_updated_required field is required';
-			if(bundleData['is_update_required'] && !['1', '0'].includes(bundleData['is_update_required'])) err = 'Invalid is_updated_required. Available values: 1, 0';
-			// validate that bundle for this platform and version does not exist
-			const mBundle = await Bundle.findOne({platform: bundleData['platform'], version: bundleData['version']});
-			if(mBundle) err = `Bundle is already uploaded for ${bundleData['platform']} platform and app version ${bundleData['version']}`;
-			return err;
-		};
+		// create a new bundle
+		const bundle = new Bundle(request.body);
 
-		const multipart = request.multipart(async (field, file, filename, encoding, mimetype) => {
-			// validate bundle params
-			validationError = await getValidationError();
-			// if there is no validation error and bundle was sent then save it
-			if(!validationError && field === 'bundle') {
-				// if storage is local file
-				if(bundleData['storage'] === 'file') {
-					const localPath = `${__dirname}/../../static/bundles/${bundleData['version']}`;
-					// if folder does not exist then create it
-					if(!fs.existsSync(localPath)) fs.mkdirSync(localPath);
-					// save file to folder
-					pump(file, fs.createWriteStream(`${localPath}/${bundleData['platform']}.bundle`));
-				}
-				// set flag that bundle was uploaded
-				isBundleUploaded = true;
-			}
-			// mandatory drain the file stream
-			file.resume();
-		}, async (err) => {
-			// response handler
-			if(err) {
-				reply.code(500).send(err);
-			} else if(validationError) {
-				reply.code(400).send({error: validationError});
-			} else if(!isBundleUploaded) {
-				reply.code(500).send({error: 'Error uploading bundle'});
-			} else {
-				// save bundle model and return it
-				bundleData['url'] = `${process.env.API_URL}/static/bundles/${bundleData['version']}/${bundleData['platform']}.bundle`;
-				const bundle = new Bundle(bundleData);
-				await bundle.save();
-				reply.code(200).send(bundle);
-			}
-		});
+		// if we want to store bundle file on our own server
+		if(request.body.storage === 'file') {
+			const localPath = `${__dirname}/../../static/bundles/${request.body.version}`;
+			// if folder does not exist then create it
+			if(!fs.existsSync(localPath)) fs.mkdirSync(localPath);
+			// convert file buffer to readable stream
+			const readable = new Readable();
+			readable._read = () => {};
+			readable.push(request.body.bundle[0].data);
+			readable.push(null);
+			// save file to folder
+			pump(readable, fs.createWriteStream(`${localPath}/${request.body.platform}.bundle`));
+			// assign url to bundle
+			bundle['url'] = `${process.env.API_URL}/static/bundles/${request.body.version}/${request.body.platform}.bundle`;
+		}
+
+		// if we want to store bundle on AWS S3
+		if(request.body.storage === 'aws_s3') {
+			// upload file to AWS S3
+			const uploadParams = {
+				Bucket: process.env.AWS_S3_BUCKET, 
+				Key: `bundles/${request.body.version}/${request.body.platform}.bundle`, 
+				Body: request.body.bundle[0].data
+			};
+			const resp = await fastify.aws_s3.upload(uploadParams).promise();
+			// assign url to bundle
+			bundle['url'] = resp['Location'];
+		}
 		
-		// assign request body params to bundle object
-		multipart.on('field', (key, value) => {
-			bundleData[key] = value;
-		});
+		// save bundle
+		await bundle.save();
+
+		// send the newly created bundle
+		reply.code(200).send(bundle);
 	});
 
 }
