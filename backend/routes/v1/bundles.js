@@ -125,6 +125,56 @@ async function routes(fastify, options) {
 		reply.code(200).send(bundle);
 	});
 
+	/**
+	 * Get bundles
+	 */
+	fastify.get('/bundles', {
+		schema: {
+			querystring: {
+				type: 'object',
+				properties: {
+					page: {
+						type: 'number',
+						default: 0
+					}
+				}
+			},
+			response: {
+				200: {
+					type: 'array',
+					items: {
+						type: 'object',
+						properties: {
+							_id: { type: 'string' },
+							desc: { type: 'string' },
+							platform: { type: 'string' },
+							storage: { type: 'string' },
+							version: { type: 'string' },
+							is_update_required: { type: 'boolean' },
+							url: { type: 'string' },
+							created_at: { type: 'string' },
+							updated_at: { type: 'string' }
+						}
+					}
+				}
+			}
+		},
+		preValidation: [
+			fastify.authenticate
+		],
+		onSend: async (request, reply, payload) => {
+			const totalCount = await Bundle.countDocuments();
+			const pageLast = totalCount % +process.env.ITEMS_PER_PAGE === 0 ? Math.floor(totalCount / +process.env.ITEMS_PER_PAGE) - 1 : Math.floor(totalCount / +process.env.ITEMS_PER_PAGE);
+			reply.header('X-Total-Count', totalCount);
+			reply.header('X-Limit', process.env.ITEMS_PER_PAGE);
+			reply.header('X-Page', request.query.page);
+			reply.header('X-Page-Last', pageLast);
+		}
+	}, async function (request, reply) {
+		const bundles = await Bundle.find().skip(+process.env.ITEMS_PER_PAGE * request.query.page).limit(+process.env.ITEMS_PER_PAGE);
+		reply.send(bundles);
+	});
+
 }
 
 module.exports = routes;
