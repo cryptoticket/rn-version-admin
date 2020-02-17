@@ -8,6 +8,7 @@ const pump = require('pump');
 async function routes(fastify, options) {
 
 	const Bundle = fastify.mongo.model('Bundle');
+	const User = fastify.mongo.model('User');
 
 	/**
 	 * Create a new bundle
@@ -32,14 +33,23 @@ async function routes(fastify, options) {
 			}
 		},
 		preValidation: async (request, reply) => {
+			// check that auth header exists
+			if(!request.headers['authorization']) {
+				reply.code(403).send(new Error('Autorization header is not set'));
+				return;
+			}
+			// check that user with auth api token exists
+			const mUser = await User.findOne({api_token: request.headers['authorization'].replace('Bearer ', '')});
+			if(!mUser) {
+				reply.code(403).send(new Error('Invalid api token'));
+				return;
+			}
 			// check that request is multipart/form-data
 			if (!request.isMultipart()) {
-				reply.code(400).send(new Error('Request is not multipart'))
+				reply.code(400).send(new Error('Request is not multipart'));
 			}
 		}
 	}, function (request, reply) {
-		// TODO: auth by api token
-		// TODO: validate that there is not version for this platform
 		// TODO: upload local or s3
 		// TODO: check that bundles are available via local and s3 storage
 
@@ -47,8 +57,9 @@ async function routes(fastify, options) {
 		let isBundleUploaded = false;
 		let validationError = null;
 
-		const getValidationError = () => {
+		const getValidationError = async () => {
 			let err = null;
+			// validate request parameters
 			if(!bundleData['platform']) err = "platform field is required";
 			if(bundleData['platform'] && !['android', 'ios'].includes(bundleData['platform'])) err = "Invalid platform. Available values: android, ios";
 			if(!bundleData['storage']) err = "storage field is required";
@@ -57,12 +68,15 @@ async function routes(fastify, options) {
 			if(bundleData['version'] && !RegExp(/^(\d+\.)?(\d+\.)?(\*|\d+)$/).test(bundleData['version'])) err = 'Invalid semver version format';
 			if(!bundleData['is_update_required']) err = 'is_updated_required field is required';
 			if(bundleData['is_update_required'] && !['1', '0'].includes(bundleData['is_update_required'])) err = 'Invalid is_updated_required. Available values: 1, 0';
+			// validate that bundle for this platform and version does not exist
+			const mBundle = await Bundle.findOne({platform: bundleData['platform'], version: bundleData['version']});
+			if(mBundle) err = `Bundle is already uploaded for ${bundleData['platform']} platform and app version ${bundleData['version']}`;
 			return err;
 		};
 
-		const multipart = request.multipart((field, file, filename, encoding, mimetype) => {
+		const multipart = request.multipart(async (field, file, filename, encoding, mimetype) => {
 			// validate bundle params
-			validationError = getValidationError();
+			validationError = await getValidationError();
 			// if there is no validation error and bundle was sent then save it
 			if(!validationError && field === 'bundle') {
 				// if storage is local file
