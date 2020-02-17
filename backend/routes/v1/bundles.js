@@ -175,6 +175,74 @@ async function routes(fastify, options) {
 		reply.send(bundles);
 	});
 
+	/**
+	 * Update bundle
+	 */
+	fastify.patch('/bundles/:id', {
+		schema: {
+			body: {
+				type: 'object',
+				required: ['is_update_required'],
+				properties: {
+					is_update_required: {
+						type: 'boolean'
+					},
+					desc: {
+						type: 'string'
+					}
+				}
+			},
+			params: {
+				type: 'object',
+				required: ['id'],
+				properties: {
+					id: {
+						type: 'string',
+						pattern: '^[0-9a-fA-F]{24}$'
+					}
+				}
+			},
+			response: {
+				200: {
+					type: 'object',
+					properties: {
+						_id: { type: 'string' },
+						desc: { type: 'string' },
+						platform: { type: 'string' },
+						storage: { type: 'string' },
+						version: { type: 'string' },
+						is_update_required: { type: 'boolean' },
+						url: { type: 'string' },
+						created_at: { type: 'string' },
+						updated_at: { type: 'string' }
+					}
+				}
+			}
+		},
+		preValidation: [
+			fastify.authenticate,
+			async (request, reply) => {
+				// check that bundle exists
+				const bundle = await Bundle.findById(request.params.id);
+				if(!bundle) {
+					reply.code(400);
+					throw new Error('Bundle not found');
+				}
+			}
+		], 
+	}, async function (request, reply) {
+		const bundle = await Bundle.findById(request.params.id);
+		// if we are enabling "is_update_required" then disable any other required updates for the platform
+		if(request.body.is_update_required) {
+			await Bundle.updateMany({platform: bundle.platform}, {is_update_required: false});
+		}
+		// update bundle
+		bundle.is_update_required = request.body.is_update_required;
+		bundle.desc = request.body.desc;
+		await bundle.save();
+		reply.send(bundle);
+	});
+
 }
 
 module.exports = routes;
