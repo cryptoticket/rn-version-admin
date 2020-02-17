@@ -12,6 +12,50 @@ async function routes(fastify, options) {
 	const User = fastify.mongo.model('User');
 
 	/**
+	 * Get latest bundle by platform
+	 */
+	fastify.get('/bundles/latest/:platform', {
+		schema: {
+			params: {
+				type: 'object',
+				properties: {
+					platform: {
+						type: 'string',
+						enum: ['android', 'ios']
+					}
+				}
+			},
+			response: {
+				200: {
+					type: 'object',
+					properties: {
+						_id: { type: 'string' },
+						desc: { type: 'string' },
+						platform: { type: 'string' },
+						storage: { type: 'string' },
+						version: { type: 'string' },
+						is_update_required: { type: 'boolean' },
+						url: { type: 'string' },
+						created_at: { type: 'string' },
+						updated_at: { type: 'string' }
+					}
+				}
+			}
+		}
+	}, async function (request, reply) {
+		let bundle = null;
+		// try to find bundle which is required to update
+		bundle = await Bundle.findOne({platform: request.params.platform, is_update_required: true});
+		if(bundle) {
+			reply.send(bundle);
+		} else {
+			// find bundle with the latest version (or it can be null if there are no bundles yet)
+			bundle = await Bundle.findOne({platform: request.params.platform}).sort({version: 'desc'});
+			reply.send(bundle || {});
+		}
+	});
+
+	/**
 	 * Create a new bundle
 	 */
 	fastify.post('/bundles', {
