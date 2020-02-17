@@ -243,6 +243,67 @@ async function routes(fastify, options) {
 		reply.send(bundle);
 	});
 
+	/**
+	 * Delete bundle
+	 */
+	fastify.delete('/bundles/:id', {
+		schema: {
+			params: {
+				type: 'object',
+				required: ['id'],
+				properties: {
+					id: {
+						type: 'string',
+						pattern: '^[0-9a-fA-F]{24}$'
+					}
+				}
+			},
+			response: {
+				200: {
+					type: 'object'
+				}
+			}
+		},
+		preValidation: [
+			fastify.authenticate,
+			async (request, reply) => {
+				// check that bundle exists
+				const bundle = await Bundle.findById(request.params.id);
+				if(!bundle) {
+					reply.code(400);
+					throw new Error('Bundle not found');
+				}
+			}
+		], 
+	}, async function (request, reply) {
+		const bundle = await Bundle.findById(request.params.id);
+		
+		// if storage type is "file" then delete file from our server
+		if(bundle.storage === 'file') {
+			const folderPath = `${__dirname}/../../static/bundles/${bundle.version}`;
+			const filePath = `${folderPath}/${bundle.platform}.bundle`;
+			fs.unlinkSync(filePath);
+			const folderFiles = fs.readdirSync(folderPath);
+			// if there are not files in version folder then delete folder
+			if(folderFiles.length === 0) {
+				fs.rmdirSync(folderPath);
+			}
+		}
+
+		// if storage type is "aws_s3" then delete file from S3 service
+		if(bundle.storage === 'aws_s3') {
+			await fastify.aws_s3.deleteObject({
+				Bucket: process.env.AWS_S3_BUCKET,
+				Key: `bundles/${bundle.version}/${bundle.platform}.bundle`
+			}).promise();
+		}
+
+		// delete bundle from mongo
+		await Bundle.deleteOne({_id: request.params.id});
+		
+		reply.send();
+	});
+
 }
 
 module.exports = routes;
