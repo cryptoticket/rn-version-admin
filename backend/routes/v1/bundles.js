@@ -213,7 +213,7 @@ async function routes(fastify, options) {
 			reply.header('X-Page-Last', pageLast);
 		}
 	}, async function (request, reply) {
-		const bundles = await Bundle.find().skip(+process.env.ITEMS_PER_PAGE * request.query.page).limit(+process.env.ITEMS_PER_PAGE);
+		const bundles = await Bundle.find().skip(+process.env.ITEMS_PER_PAGE * request.query.page).limit(+process.env.ITEMS_PER_PAGE).sort({version: 'desc'});
 		reply.send(bundles);
 	});
 
