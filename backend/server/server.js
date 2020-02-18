@@ -42,19 +42,15 @@ fastify.register(require('../plugins/jwt-auth'));
 // initialize AWS S3
 fastify.register(require('../plugins/aws-s3'));
 
-// initialize static files serving
-fastify.register(require('fastify-static'), {
-	root: path.join(__dirname, '../static/bundles')
-});
-
 // attach APIs
 fastify.register(require('../routes/v1/auth'), { prefix: '/api/v1' }); // auth API
 fastify.register(require('../routes/v1/bundles'), { prefix: '/api/v1' }); // bundles API
 fastify.register(require('../routes/v1/users'), { prefix: '/api/v1' }); // users API
-  
-// default route
-fastify.get('/', function (request, reply) {
-	reply.send('React Native Version Admin works');
+
+// serve web app
+fastify.register(require('fastify-static'), {
+	root: path.join(__dirname, '../../build'),
+	prefix: '/'
 });
 
 // serve static bundles
@@ -76,7 +72,7 @@ fastify.get('/static/bundles/:version/:filename', {
 		}
 	}
 }, function (request, reply) {
-	reply.sendFile(`${request.params.version}/${request.params.filename}`);
+	reply.sendFile(`${request.params.version}/${request.params.filename}`, path.join(__dirname, '../static/bundles'));
 });
 
 // run the server
