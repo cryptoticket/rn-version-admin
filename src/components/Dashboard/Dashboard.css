@@ -1,3 +1,9 @@
+.app__global-loader {
+	position: absolute;
+    top: 70px;
+    right: 20px;
+}
+
 .content {
 	margin: 0;
 }

@@ -1,5 +1,6 @@
 import { Card } from 'primereact/card';
-import { Column, DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
 import React from 'react';
 
 /**

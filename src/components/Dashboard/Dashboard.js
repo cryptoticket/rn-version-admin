@@ -1,12 +1,16 @@
 import { Button } from 'primereact/button';
+import { Growl } from 'primereact/growl';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toolbar } from 'primereact/toolbar';
 import React, { setGlobal } from 'reactn';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
-import { Login, Version } from '../../pages';
+import { Login, User, Version } from '../../pages';
 import './Dashboard.css';
 
 // set an initial global state
 setGlobal({
+	growl: null,
+	isLoading: false,
 	redirect: null,
 	user: null
 });
@@ -69,6 +73,9 @@ export default class Dashboard extends React.Component {
 							{/* show top menu only to authorized user */}
 							{this.global.user && 
 								<div className="p-toolbar-group-right">
+									<Link to="/users">
+										<Button label="Users" icon="pi pi-users" className="p-button-secondary" />
+									</Link>
 									<Link to="/versions">
 										<Button label="Versions" icon="pi pi-cloud" className="p-button-secondary" />
 									</Link>
@@ -81,6 +88,9 @@ export default class Dashboard extends React.Component {
 					<div className="p-grid content">
 						<div className="p-col-12">
 						<Switch>
+							<Route path="/users">
+								<User />
+							</Route>
 							<Route path="/versions">
 								<Version />
 							</Route>
@@ -93,6 +103,14 @@ export default class Dashboard extends React.Component {
 				</div>
 				{/* app global redirect */}
 				{ this.global.redirect && <Redirect to={this.global.redirect} /> }
+				{/* app global loader */}
+				{ this.global.isLoading && 
+					<div className="app__global-loader">
+						<ProgressSpinner style={{width: '50px', height: '50px'}} strokeWidth="8" />
+					</div>
+				}
+				{/* app global notification message */}
+				<Growl ref={(el) => { this.setGlobal({growl: el}) }} />
 			</Router>
 		);
 	}

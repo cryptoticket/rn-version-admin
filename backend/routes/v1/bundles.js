@@ -121,8 +121,6 @@ async function routes(fastify, options) {
 			}
 		}
 	}, async function (request, reply) {
-		// TODO: check that bundles are available via local and s3 storage
-
 		// validate that bundle for this platform and version does not exist
 		const oldBundle = await Bundle.findOne({platform: request.body.platform, version: request.body.version});
 		if(oldBundle) {
