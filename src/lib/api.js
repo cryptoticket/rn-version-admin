@@ -5,6 +5,19 @@ const userAuthToken = localStorage.getItem('token');
 if(userAuthToken) axios.defaults.headers.common['Authorization'] = `Bearer ${userAuthToken}`;
 
 /**
+ * Bundles API
+ */
+
+/**
+ * Return bundles by page number 
+ */
+async function getBundles(page = 0) {
+	return await axios.get('/api/v1/bundles', { params: {
+		page: page
+	}});
+}
+
+/**
  * Users API
  */
 
@@ -18,6 +31,8 @@ async function getUsers(page = 0) {
 }
 
 export default {
+	// bundles API
+	getBundles,
 	// users API
 	getUsers
 };
