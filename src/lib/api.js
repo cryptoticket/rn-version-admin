@@ -18,6 +18,13 @@ async function getBundles(page = 0) {
 }
 
 /**
+ * Updates bundle 
+ */
+async function updateBundle(bundle) {
+	return await axios.patch(`/api/v1/bundles/${bundle._id}`, bundle);
+};
+
+/**
  * Users API
  */
 
@@ -33,6 +40,7 @@ async function getUsers(page = 0) {
 export default {
 	// bundles API
 	getBundles,
+	updateBundle,
 	// users API
 	getUsers
 };
