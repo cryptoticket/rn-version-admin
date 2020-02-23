@@ -5,6 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import  { InputText } from 'primereact/inputtext';
+import { Paginator } from 'primereact/paginator';
 import React from 'reactn';
 
 import { api } from '../../lib';
@@ -20,6 +21,9 @@ export default class Version extends React.Component {
 		isDialogVisible: false,
 		latestBundleAndroid: {},
 		latestBundleIos: {},
+		paginationCurrentPage: 0,
+		paginationItemsPerPage: 0,
+		paginationTotalItemsCount: 0,
 		selectedBundle: null
 	};
 
@@ -29,13 +33,15 @@ export default class Version extends React.Component {
 	async componentDidMount() {
 		try {
 			this.setGlobal({isLoading: true});
-			const respBundles = await api.getBundles(0);
+			const respBundles = await api.getBundles(this.state.paginationCurrentPage);
 			const respLatestBundleAndroid = await api.getLatestBundle('android');
 			const respLatestBundleIos = await api.getLatestBundle('ios');
 			this.setState({
 				bundles: respBundles.data,
 				latestBundleAndroid: respLatestBundleAndroid.data,
-				latestBundleIos: respLatestBundleIos.data
+				latestBundleIos: respLatestBundleIos.data,
+				paginationItemsPerPage: +respBundles.headers['x-limit'],
+				paginationTotalItemsCount: +respBundles.headers['x-total-count']
 			});
 		} catch(err) {
 			console.error(err);
@@ -160,6 +166,11 @@ export default class Version extends React.Component {
 							</React.Fragment>
 						)} />
 					</DataTable>
+					<Paginator 
+						rows={this.state.paginationItemsPerPage} 
+						totalRecords={this.state.paginationTotalItemsCount} 
+						first={this.state.paginationItemsPerPage * this.state.paginationCurrentPage}
+						onPageChange={(e) => this.setState({paginationCurrentPage: e.first / this.state.paginationItemsPerPage}, () => this.componentDidMount())} />
 				</Card>
 				{/* bundle dialog window */}
 				{this.state.selectedBundle &&

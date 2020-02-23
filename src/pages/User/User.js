@@ -4,6 +4,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import  { InputText } from 'primereact/inputtext';
+import { Paginator } from 'primereact/paginator';
 import React from 'reactn';
 import validator from 'validator';
 
@@ -18,6 +19,9 @@ export default class User extends React.Component {
 		isDeleteDialogVisible: false,
 		isNewUser: false,
 		isUserDialogVisible: false,
+		paginationCurrentPage: 0,
+		paginationItemsPerPage: 0,
+		paginationTotalItemsCount: 0,
 		selectedUser: null,
 		users: [],
 	};
@@ -28,8 +32,12 @@ export default class User extends React.Component {
 	async componentDidMount() {
 		try {
 			this.setGlobal({isLoading: true});
-			const resp = await api.getUsers(0);
-			this.setState({users: resp.data});
+			const resp = await api.getUsers(this.state.paginationCurrentPage);
+			this.setState({
+				paginationItemsPerPage: +resp.headers['x-limit'],
+				paginationTotalItemsCount: +resp.headers['x-total-count'],
+				users: resp.data
+			});
 		} catch(err) {
 			console.error(err);
 			this.global.growl.show({severity: 'error', summary: 'Error', detail: 'Error on loading users'});
@@ -168,6 +176,11 @@ export default class User extends React.Component {
 							</React.Fragment>
 						)} />
 					</DataTable>
+					<Paginator 
+						rows={this.state.paginationItemsPerPage} 
+						totalRecords={this.state.paginationTotalItemsCount} 
+						first={this.state.paginationItemsPerPage * this.state.paginationCurrentPage}
+						onPageChange={(e) => this.setState({paginationCurrentPage: e.first / this.state.paginationItemsPerPage}, () => this.componentDidMount())} />
 				</Card>
 				{/* bundle dialog window */}
 				{this.state.isUserDialogVisible &&
