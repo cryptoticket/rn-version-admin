@@ -18,6 +18,8 @@ export default class Version extends React.Component {
 		bundles: [],
 		isDeleteDialogVisible: false,
 		isDialogVisible: false,
+		latestBundleAndroid: {},
+		latestBundleIos: {},
 		selectedBundle: null
 	};
 
@@ -27,8 +29,14 @@ export default class Version extends React.Component {
 	async componentDidMount() {
 		try {
 			this.setGlobal({isLoading: true});
-			const resp = await api.getBundles(0);
-			this.setState({bundles: resp.data});
+			const respBundles = await api.getBundles(0);
+			const respLatestBundleAndroid = await api.getLatestBundle('android');
+			const respLatestBundleIos = await api.getLatestBundle('ios');
+			this.setState({
+				bundles: respBundles.data,
+				latestBundleAndroid: respLatestBundleAndroid.data,
+				latestBundleIos: respLatestBundleIos.data
+			});
 		} catch(err) {
 			console.error(err);
 			this.global.growl.show({severity: 'error', summary: 'Error', detail: 'Error on loading bundles'});
@@ -124,6 +132,12 @@ export default class Version extends React.Component {
 	render() {
 		return (
 			<div>
+				<Card>
+					<span>Android latest version: <strong>{Object.keys(this.state.latestBundleAndroid).length > 0 ? this.state.latestBundleAndroid.version : 'not available'}</strong></span>
+				</Card>
+				<Card>
+					<span>iOS latest version: <strong>{Object.keys(this.state.latestBundleIos).length > 0 ? this.state.latestBundleIos.version : 'not available'}</strong></span>
+				</Card>
 				{/* versions table */}
 				<Card>
 					<h3>Versions</h3>

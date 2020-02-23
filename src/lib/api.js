@@ -26,6 +26,13 @@ async function getBundles(page = 0) {
 }
 
 /**
+ * Returns latest bundle by platform (ios or android)
+ */
+async function getLatestBundle(paltform) {
+	return await axios.get(`/api/v1/bundles/latest/${paltform}`);
+}
+
+/**
  * Updates bundle 
  */
 async function updateBundle(bundle) {
@@ -70,6 +77,7 @@ export default {
 	// bundles API
 	deleteBundle,
 	getBundles,
+	getLatestBundle,
 	updateBundle,
 	// users API
 	createUser,
