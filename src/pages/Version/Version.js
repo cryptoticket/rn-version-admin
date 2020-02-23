@@ -16,6 +16,7 @@ export default class Version extends React.Component {
 	// default state
 	state = {
 		bundles: [],
+		isDeleteDialogVisible: false,
 		isDialogVisible: false,
 		selectedBundle: null
 	};
@@ -37,6 +38,17 @@ export default class Version extends React.Component {
 	};
 
 	/**
+	 * Returns delete dialog footer
+	 * @return {Object} JSX template
+	 */
+	getDeleteDialogFooter = () => {
+		return (<div>
+			<Button label="Delete" icon="pi pi-trash" onClick={this.onDelete} className="p-button-danger" />
+			<Button label="Cancel" icon="pi pi-times" onClick={() => this.setState({isDeleteDialogVisible: false})} className="p-button-secondary" />
+		</div>);
+	};
+
+	/**
 	 * Returns dialog footer
 	 * @return {Object} JSX template
 	 */
@@ -45,6 +57,35 @@ export default class Version extends React.Component {
 			<Button label="Save" icon="pi pi-check" onClick={this.onSaveClick} />
 			<Button label="Cancel" icon="pi pi-times" onClick={() => this.setState({isDialogVisible: false})} className="p-button-secondary" />
 		</div>);
+	};
+
+	/**
+	 * On bundle delete
+	 */
+	onDelete = async () => {
+		try {
+			await api.deleteBundle(this.state.selectedBundle._id);
+			this.setState({
+				isDeleteDialogVisible: false,
+				selectedBundle: null
+			});
+			await this.componentDidMount();
+			this.global.growl.show({severity: 'success', summary: 'Success', detail: 'Bundle deleted'});
+		} catch(err) {
+			console.error(err);
+			this.global.growl.show({severity: 'error', summary: 'Error', detail: 'Error on deleting bundle'});
+		}
+	};
+
+	/**
+	 * On "delete" button click
+	 * @param {Object} rowData model data
+	 */
+	onDeleteClick = (rowData) => {
+		this.setState({
+			isDeleteDialogVisible: true,
+			selectedBundle: rowData
+		});
 	};
 
 	/**
@@ -100,7 +141,7 @@ export default class Version extends React.Component {
 									<Button className="p-button-warning" label="Edit" icon="pi pi-pencil" onClick={() => this.onEditClick(rowData)} />
 								</span>
 								<span className="ml-5">
-									<Button className="p-button-danger" label="Delete" icon="pi pi-trash" />
+									<Button className="p-button-danger" label="Delete" icon="pi pi-trash" onClick={() => this.onDeleteClick(rowData)} />
 								</span>
 							</React.Fragment>
 						)} />
@@ -133,6 +174,14 @@ export default class Version extends React.Component {
 									/>
 								</div>
 							</div>
+						</div>
+					</Dialog>
+				}
+				{/* delete dialog */}
+				{this.state.isDeleteDialogVisible &&
+					<Dialog header={'Deleting bundle'} style={{width: '30%'}} visible={this.state.isDeleteDialogVisible} footer={this.getDeleteDialogFooter()} onHide={() => this.setState({isDeleteDialogVisible: false})}>
+						<div>
+							Delete {this.state.selectedBundle.platform} bundle with version {this.state.selectedBundle.version} ?
 						</div>
 					</Dialog>
 				}

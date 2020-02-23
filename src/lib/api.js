@@ -9,6 +9,14 @@ if(userAuthToken) axios.defaults.headers.common['Authorization'] = `Bearer ${use
  */
 
 /**
+ * Deletes bundle 
+ */
+async function deleteBundle(id) {
+	return await axios.delete(`/api/v1/bundles/${id}`);
+};
+
+
+/**
  * Return bundles by page number 
  */
 async function getBundles(page = 0) {
@@ -60,6 +68,7 @@ async function updateUser(user) {
 
 export default {
 	// bundles API
+	deleteBundle,
 	getBundles,
 	updateBundle,
 	// users API
