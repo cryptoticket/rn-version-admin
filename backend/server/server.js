@@ -7,6 +7,9 @@ const path = require('path');
 // initialize fastify instance
 const fastify = require('fastify')({ logger: true });
 
+// add ETAG headers to request for caching support
+fastify.register(require('fastify-etag'));
+
 // initialize plugin for file uploads
 fastify.register(require('fastify-multipart'), { 
 	addToBody: true,
