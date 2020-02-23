@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
-import  {InputText } from 'primereact/inputtext';
+import  { InputText } from 'primereact/inputtext';
 import React from 'reactn';
 
 import { api } from '../../lib';

@@ -29,6 +29,20 @@ async function updateBundle(bundle) {
  */
 
 /**
+ * Creates a new user 
+ */
+async function createUser(user) {
+	return await axios.post('/api/v1/users', user);
+}
+
+/**
+ * Deletes user 
+ */
+async function deleteUser(id) {
+	return await axios.delete(`/api/v1/users/${id}`);
+};
+
+/**
  * Return users by page number 
  */
 async function getUsers(page = 0) {
@@ -37,10 +51,20 @@ async function getUsers(page = 0) {
 	}});
 }
 
+/**
+ * Updates user 
+ */
+async function updateUser(user) {
+	return await axios.patch(`/api/v1/users/${user._id}`, user);
+};
+
 export default {
 	// bundles API
 	getBundles,
 	updateBundle,
 	// users API
-	getUsers
+	createUser,
+	deleteUser,
+	getUsers,
+	updateUser
 };
