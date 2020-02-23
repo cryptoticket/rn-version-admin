@@ -16,6 +16,7 @@ export default class User extends React.Component {
 	// default state
 	state = {
 		isDeleteDialogVisible: false,
+		isNewUser: false,
 		isUserDialogVisible: false,
 		selectedUser: null,
 		users: [],
@@ -60,6 +61,19 @@ export default class User extends React.Component {
 	};
 
 	/**
+	 * On "create" button click
+	 */
+	onCreateClick = () => {
+		this.setState({
+			isNewUser: true,
+			isUserDialogVisible: true,
+			selectedUser: {
+				email: ''
+			}
+		});
+	};
+
+	/**
 	 * On user delete
 	 */
 	onDelete = async () => {
@@ -95,6 +109,7 @@ export default class User extends React.Component {
 	 */
 	onEditClick = (rowData) => {
 		this.setState({
+			isNewUser: false,
 			isUserDialogVisible: true,
 			selectedUser: rowData
 		});
@@ -105,16 +120,22 @@ export default class User extends React.Component {
 	 */
 	onSave = async () => {
 		try {
-			await api.updateUser(this.state.selectedUser);
+			if(this.state.isNewUser) {
+				// create user
+				await api.createUser(this.state.selectedUser);
+			} else {
+				// update user
+				await api.updateUser(this.state.selectedUser);
+			}
 			this.setState({
 				isUserDialogVisible: false,
 				selectedUser: null
 			});
 			await this.componentDidMount();
-			this.global.growl.show({severity: 'success', summary: 'Success', detail: 'User updated'});
+			this.global.growl.show({severity: 'success', summary: 'Success', detail: this.state.isNewUser ? 'User created' : 'User updated'});
 		} catch(err) {
 			console.error(err);
-			this.global.growl.show({severity: 'error', summary: 'Error', detail: 'Error on updating user'});
+			this.global.growl.show({severity: 'error', summary: 'Error', detail: this.state.isNewUser ? 'Error on creating user' : 'Error on updating user'});
 		}
 	};
 
@@ -128,6 +149,9 @@ export default class User extends React.Component {
 				{/* users table */}
 				<Card>
 					<h3>Users</h3>
+					<div className="mb-10 text-right">
+						<Button label="Create" icon="pi pi-plus" onClick={() => this.onCreateClick()} />
+					</div>
 					<DataTable value={this.state.users}>
 						<Column field="email" header="Email" />
 						<Column style={{overflowWrap: 'break-word'}} field="api_token" header="API token" />
@@ -147,7 +171,7 @@ export default class User extends React.Component {
 				</Card>
 				{/* bundle dialog window */}
 				{this.state.isUserDialogVisible &&
-					<Dialog header={`Updating user ${this.state.selectedUser.email}`} style={{width: '30%'}} visible={this.state.isUserDialogVisible} footer={this.getUserDialogFooter()} onHide={() => this.setState({isUserDialogVisible: false})}>
+					<Dialog header={this.state.isNewUser ? 'Creating user' : `Updating user ${this.state.selectedUser.email}`} style={{width: '30%'}} visible={this.state.isUserDialogVisible} footer={this.getUserDialogFooter()} onHide={() => this.setState({isUserDialogVisible: false})}>
 						<div>
 							<div>
 								<div>
