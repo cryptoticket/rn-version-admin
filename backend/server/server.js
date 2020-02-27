@@ -86,3 +86,5 @@ fastify.listen(process.env.PORT, function (err, address) {
 	}
 	fastify.log.info(`server listening on ${address}`);
 });
+
+module.exports = fastify;
