@@ -26,7 +26,6 @@ describe('users API tests', () => {
 	});
 
 	after(async () => {
-		await fastify.close();
 		await admin.delete();
 	});
 
@@ -202,7 +201,7 @@ describe('users API tests', () => {
 				.delete(`${API_PREFIX}/users/${testUser.id}`)
 				.set('Authorization', `Bearer ${adminToken}`)
 				.expect(200)
-				.expect(async () => {
+				.then(async () => {
 					const deletedUser = await User.findOne({email: 'test_user@mail.com'});
 					assert.equal(deletedUser, null);
 				})
