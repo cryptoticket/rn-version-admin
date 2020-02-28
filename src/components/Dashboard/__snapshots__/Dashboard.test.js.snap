@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard component render() should render component 1`] = `
+Array [
+  <div
+    className="p-5"
+  >
+    <div>
+      <div
+        className="p-toolbar p-component"
+        id={null}
+        role="toolbar"
+        style={null}
+      >
+        <div
+          className="p-toolbar-group-left"
+        >
+          <strong>
+            React Native Version Admin
+          </strong>
+        </div>
+        <div
+          className="p-toolbar-group-right"
+        >
+          <a
+            href="/users"
+            onClick={[Function]}
+          >
+            <button
+              className="p-button p-component p-button-secondary p-button-text-icon-left"
+            >
+              <span
+                className="pi pi-users p-c p-button-icon-left"
+              />
+              <span
+                className="p-button-text p-c"
+              >
+                Users
+              </span>
+            </button>
+          </a>
+          <a
+            href="/versions"
+            onClick={[Function]}
+          >
+            <button
+              className="p-button p-component p-button-secondary p-button-text-icon-left"
+            >
+              <span
+                className="pi pi-cloud p-c p-button-icon-left"
+              />
+              <span
+                className="p-button-text p-c"
+              >
+                Versions
+              </span>
+            </button>
+          </a>
+          <button
+            className="p-button p-component p-button-secondary p-button-text-icon-left"
+            onClick={[Function]}
+          >
+            <span
+              className="pi pi-power-off p-c p-button-icon-left"
+            />
+            <span
+              className="p-button-text p-c"
+            >
+              Logout
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      className="p-grid content"
+    >
+      <div
+        className="p-col-12"
+      >
+        <div
+          className="login"
+        >
+          <div
+            className="p-card p-component login__card"
+            style={null}
+          >
+            <div
+              className="p-card-body"
+            >
+              <div
+                className="p-card-content"
+              >
+                 
+                <div
+                  className="p-inputgroup p-justify-center"
+                >
+                  <button
+                    className="p-button p-component p-button-text-icon-left"
+                    onClick={[Function]}
+                  >
+                    <span
+                      className="pi pi-google p-c p-button-icon-left"
+                    />
+                    <span
+                      className="p-button-text p-c"
+                    >
+                      Login with Google
+                    </span>
+                  </button>
+                </div>
+                 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="p-growl p-component p-growl-topright"
+    id={null}
+    style={null}
+  >
+    <div />
+  </div>,
+]
+`;

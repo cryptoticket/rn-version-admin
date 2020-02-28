@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login component render() should render component 1`] = `
+<div
+  className="login"
+>
+  <div
+    className="p-card p-component login__card"
+    style={null}
+  >
+    <div
+      className="p-card-body"
+    >
+      <div
+        className="p-card-content"
+      >
+         
+        <div
+          className="p-inputgroup p-justify-center"
+        >
+          <button
+            className="p-button p-component p-button-text-icon-left"
+            onClick={[Function]}
+          >
+            <span
+              className="pi pi-google p-c p-button-icon-left"
+            />
+            <span
+              className="p-button-text p-c"
+            >
+              Login with Google
+            </span>
+          </button>
+        </div>
+         
+      </div>
+    </div>
+  </div>
+</div>
+`;

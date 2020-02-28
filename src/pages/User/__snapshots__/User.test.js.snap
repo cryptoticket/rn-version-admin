@@ -1,0 +1,284 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`User component getDeleteDialogFooter() should render delete dialog footer 1`] = `
+<div>
+  <button
+    className="p-button p-component p-button-danger p-button-text-icon-left"
+    onClick={[Function]}
+  >
+    <span
+      className="pi pi-trash p-c p-button-icon-left"
+    />
+    <span
+      className="p-button-text p-c"
+    >
+      Delete
+    </span>
+  </button>
+  <button
+    className="p-button p-component p-button-secondary p-button-text-icon-left"
+    onClick={[Function]}
+  >
+    <span
+      className="pi pi-times p-c p-button-icon-left"
+    />
+    <span
+      className="p-button-text p-c"
+    >
+      Cancel
+    </span>
+  </button>
+</div>
+`;
+
+exports[`User component getUserDialogFooter() should render user dialog footer 1`] = `
+<div>
+  <button
+    className="p-button p-component p-button-text-icon-left p-disabled"
+    disabled={true}
+    onClick={[Function]}
+  >
+    <span
+      className="pi pi-check p-c p-button-icon-left"
+    />
+    <span
+      className="p-button-text p-c"
+    >
+      Save
+    </span>
+  </button>
+  <button
+    className="p-button p-component p-button-secondary p-button-text-icon-left"
+    onClick={[Function]}
+  >
+    <span
+      className="pi pi-times p-c p-button-icon-left"
+    />
+    <span
+      className="p-button-text p-c"
+    >
+      Cancel
+    </span>
+  </button>
+</div>
+`;
+
+exports[`User component render() should render component 1`] = `
+<div>
+  <div
+    className="p-card p-component"
+    style={null}
+  >
+    <div
+      className="p-card-body"
+    >
+      <div
+        className="p-card-content"
+      >
+         
+        <h3>
+          Users
+        </h3>
+        <div
+          className="mb-10 text-right"
+        >
+          <button
+            className="p-button p-component p-button-text-icon-left"
+            onClick={[Function]}
+          >
+            <span
+              className="pi pi-plus p-c p-button-icon-left"
+            />
+            <span
+              className="p-button-text p-c"
+            >
+              Create
+            </span>
+          </button>
+        </div>
+        <div
+          className="p-datatable p-component"
+          id={null}
+          style={null}
+        >
+          <div
+            className="p-datatable-wrapper"
+          >
+            <table
+              className={null}
+              role="grid"
+              style={null}
+            >
+              <thead
+                className="p-datatable-thead"
+              >
+                <tr>
+                  <th
+                    aria-sort={null}
+                    className=""
+                    colSpan={null}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onDragOver={[Function]}
+                    onDragStart={[Function]}
+                    onDrop={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseDown={[Function]}
+                    rowSpan={null}
+                    style={null}
+                    tabIndex={-1}
+                  >
+                    <span
+                      className="p-column-title"
+                    >
+                      Email
+                    </span>
+                  </th>
+                  <th
+                    aria-sort={null}
+                    className=""
+                    colSpan={null}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onDragOver={[Function]}
+                    onDragStart={[Function]}
+                    onDrop={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseDown={[Function]}
+                    rowSpan={null}
+                    style={
+                      Object {
+                        "overflowWrap": "break-word",
+                      }
+                    }
+                    tabIndex={-1}
+                  >
+                    <span
+                      className="p-column-title"
+                    >
+                      API token
+                    </span>
+                  </th>
+                  <th
+                    aria-sort={null}
+                    className=""
+                    colSpan={null}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onDragOver={[Function]}
+                    onDragStart={[Function]}
+                    onDrop={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseDown={[Function]}
+                    rowSpan={null}
+                    style={null}
+                    tabIndex={-1}
+                  >
+                    <span
+                      className="p-column-title"
+                    >
+                      Created at
+                    </span>
+                  </th>
+                  <th
+                    aria-sort={null}
+                    className=""
+                    colSpan={null}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onDragOver={[Function]}
+                    onDragStart={[Function]}
+                    onDrop={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseDown={[Function]}
+                    rowSpan={null}
+                    style={null}
+                    tabIndex={-1}
+                  >
+                    <span
+                      className="p-column-title"
+                    >
+                      Updated at
+                    </span>
+                  </th>
+                  <th
+                    aria-sort={null}
+                    className=""
+                    colSpan={null}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onDragOver={[Function]}
+                    onDragStart={[Function]}
+                    onDrop={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseDown={[Function]}
+                    rowSpan={null}
+                    style={null}
+                    tabIndex={-1}
+                  >
+                    <span
+                      className="p-column-title"
+                    />
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                className="p-datatable-tbody"
+              />
+            </table>
+          </div>
+        </div>
+        <div
+          className="p-paginator p-component p-unselectable-text"
+          style={null}
+        >
+          <button
+            className="p-paginator-first p-paginator-element p-link"
+            disabled={false}
+            onClick={[Function]}
+            type="button"
+          >
+            <span
+              className="p-paginator-icon pi pi-step-backward"
+            />
+          </button>
+          <button
+            className="p-paginator-prev p-paginator-element p-link"
+            disabled={false}
+            onClick={[Function]}
+            type="button"
+          >
+            <span
+              className="p-paginator-icon pi pi-caret-left"
+            />
+          </button>
+          <span
+            className="p-paginator-pages"
+          />
+          <button
+            className="p-paginator-next p-paginator-element p-link"
+            disabled={false}
+            onClick={[Function]}
+            type="button"
+          >
+            <span
+              className="p-paginator-icon pi pi-caret-right"
+            />
+          </button>
+          <button
+            className="p-paginator-last p-paginator-element p-link"
+            disabled={false}
+            onClick={[Function]}
+            type="button"
+          >
+            <span
+              className="p-paginator-icon pi pi-step-forward"
+            />
+          </button>
+        </div>
+         
+      </div>
+    </div>
+  </div>
+</div>
+`;
