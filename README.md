@@ -4,8 +4,10 @@ Web service where you can upload react native app js bundles for future dynamic 
 
 ## Possible workflow
 1. Upload your app js bundle to the service (manually or via any CI tool).
-2. Inside your app check via API if there are any new bundles available.
-3. If new bundle is available then download it inside your app and set the newly downloaded bundle as active.
+2. Add [@cryptoticket/react-native-hot-patching](https://github.com/cryptoticket/react-native-hot-patching) to your react native app. This package will: 
+	- check via `rn-version-admin` API if there are any new bundles available
+	- download bundle in background
+	- set bundle as active in background so that on the next app start downloaded bundle will be applied
 
 NOTICE: only JS updates will be applied. So if you add any native code to your app then it wouldn't be possible to dynamically update the bundle.
 
@@ -77,23 +79,7 @@ Example response:
 }
 ```
 
-6. Now inside your app you should setup bundle download and dynamic update. Latest active bundle is available at `/api/v1/bundles/latest/:platform` where `platform` param can be `android` or `ios`.
-
-Example:
-```
-// GET http://localhost:3000/api/v1/bundles/latest/android
-{
-    "_id": "5e59978cee4d7e37ed0d0255",
-    "desc": "test",
-    "platform": "android",
-    "storage": "file",
-    "version": "1.0.0",
-    "is_update_required": false,
-    "url": "http://localhost:3000/static/bundles/1.0.0/android.bundle",
-    "created_at": "2020-02-28T22:43:24.166Z",
-    "updated_at": "2020-02-28T22:43:24.166Z"
-}
-```
+6. Add [@cryptoticket/react-native-hot-patching](https://github.com/cryptoticket/react-native-hot-patching) to your react native app. This package works with `rn-version-admin` service out-of-the-box.
 
 ## How to run frontend tests
 ```
