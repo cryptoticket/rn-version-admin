@@ -26,7 +26,12 @@ export default class Dashboard extends React.Component {
 		// if oauth token was passed then save it to local storage
 		const queryParams = new URLSearchParams(window.location.search);
 		const queryToken = queryParams.get('token');
-		if(queryToken) localStorage.setItem('token', queryToken);
+		// if token exists then save it and reload page without token so that axios lib could be reinitialized and could use this new token
+		if(queryToken) {
+			localStorage.setItem('token', queryToken);
+			window.location.href = window.location.origin;
+			return;
+		} 
 		// if token exists in local storage
 		const localToken = localStorage.getItem('token');
 		if(localToken) {

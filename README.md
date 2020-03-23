@@ -81,6 +81,40 @@ Example response:
 
 6. Add [@cryptoticket/react-native-hot-patching](https://github.com/cryptoticket/react-native-hot-patching) to your react native app. This package works with `rn-version-admin` service out-of-the-box.
 
+## Auth via 3rd party sevice
+
+NOTICE: this is a very special case, most of the time you should use standard Google OAuth.
+
+By default users are authorized via Google OAuth. In some cases you should allow 3rd party service to do the auth for you (we are going to call such service a gate service). So gate service manages auth and user permissions. 
+
+If you have a deployed gate service then auth flow is the following:
+1. When user clicks "Login with google" in `rn-version-admin` login page he is redirected to gate service.
+2. Gate service redirects user to Google OAuth page.
+3. User clicks "Allow" in Google auth page and is redirected back to gate service.
+4. Gatekeeper gets user details from google account.
+5. Gatekeeper redirects user to `rn-version-admin` with jwt token in query params. JWT tokens consists of user details from google account and custom user permissions added by gate service.
+
+### How to enable auth via 3rd party service
+1. Add the following environment variable to `.env` file:
+```
+REACT_APP_OAUTH_GATE_URL=https://gate-service.com
+```
+2. Update the `JWT_SECRET` environment variable. This variable is going to be used for JWT verification in callback method (when gate redirects user to `rn-version-admin` service).
+
+### Example
+1. Set `REACT_APP_OAUTH_GATE_URL` environment variable to `https://gate-service.com/auth/google?public_key=123&callback_url=https://rn-version-admin.com/api/v1/auth/gate/callback`.
+2. Set `JWT_SECRET` environment variable to the one that is going to verify JWT token from gate service.
+3. When user clicks "Login with google" in `rn-version-admin` login page he is redirected to gate url: `https://gate-service.com/auth/google?public_key=123&callback_url=https://rn-version-admin.com/api/v1/auth/gate/callback`.
+4. Gate service checks that user exists by `public_key` in query params.
+5. Gate service redirects user to google auth page.
+6. When user clicks "Allow" he is redirected back to gate service.
+7. Gate service creates a JWT token with user details from google account and permissions(managed by gate service).
+8. Gate service redirects user to gate callback url in `rn-version-admin`: `https://rn-version-admin.com/api/v1/auth/gate/callback`. This address already exists in `rn-version-admin`.
+9. Callback method in `rn-version-admin` checks that JWT token is valid, checks user permissions, checks that user exists in DB.
+10. `rn-version-admin` service redirects user to home page with new JWT token which is used purely in `rn-version-admin`.
+11. User is authorized and can see "versions" page.
+
+
 ## How to run frontend tests
 ```
 npm run frontend:test

@@ -78,11 +78,9 @@ Array [
       <div
         className="p-col-12"
       >
-        <div
-          className="login"
-        >
+        <div>
           <div
-            className="p-card p-component login__card"
+            className="p-card p-component"
             style={null}
           >
             <div
@@ -92,21 +90,288 @@ Array [
                 className="p-card-content"
               >
                  
+                <span>
+                  Android latest version: 
+                  <strong>
+                    not available
+                  </strong>
+                </span>
+                 
+              </div>
+            </div>
+          </div>
+          <div
+            className="p-card p-component"
+            style={null}
+          >
+            <div
+              className="p-card-body"
+            >
+              <div
+                className="p-card-content"
+              >
+                 
+                <span>
+                  iOS latest version: 
+                  <strong>
+                    not available
+                  </strong>
+                </span>
+                 
+              </div>
+            </div>
+          </div>
+          <div
+            className="p-card p-component"
+            style={null}
+          >
+            <div
+              className="p-card-body"
+            >
+              <div
+                className="p-card-content"
+              >
+                 
+                <h3>
+                  Versions
+                </h3>
                 <div
-                  className="p-inputgroup p-justify-center"
+                  className="p-datatable p-component"
+                  id={null}
+                  style={null}
+                >
+                  <div
+                    className="p-datatable-wrapper"
+                  >
+                    <table
+                      className={null}
+                      role="grid"
+                      style={null}
+                    >
+                      <thead
+                        className="p-datatable-thead"
+                      >
+                        <tr>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            >
+                              Platform
+                            </span>
+                          </th>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            >
+                              Version
+                            </span>
+                          </th>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            >
+                              Is update required
+                            </span>
+                          </th>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            >
+                              Storage type
+                            </span>
+                          </th>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            >
+                              Description
+                            </span>
+                          </th>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            >
+                              Created at
+                            </span>
+                          </th>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            >
+                              Updated at
+                            </span>
+                          </th>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            />
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody
+                        className="p-datatable-tbody"
+                      />
+                    </table>
+                  </div>
+                </div>
+                <div
+                  className="p-paginator p-component p-unselectable-text"
+                  style={null}
                 >
                   <button
-                    className="p-button p-component p-button-text-icon-left"
+                    className="p-paginator-first p-paginator-element p-link"
+                    disabled={false}
                     onClick={[Function]}
+                    type="button"
                   >
                     <span
-                      className="pi pi-google p-c p-button-icon-left"
+                      className="p-paginator-icon pi pi-step-backward"
                     />
+                  </button>
+                  <button
+                    className="p-paginator-prev p-paginator-element p-link"
+                    disabled={false}
+                    onClick={[Function]}
+                    type="button"
+                  >
                     <span
-                      className="p-button-text p-c"
-                    >
-                      Login with Google
-                    </span>
+                      className="p-paginator-icon pi pi-caret-left"
+                    />
+                  </button>
+                  <span
+                    className="p-paginator-pages"
+                  />
+                  <button
+                    className="p-paginator-next p-paginator-element p-link"
+                    disabled={false}
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    <span
+                      className="p-paginator-icon pi pi-caret-right"
+                    />
+                  </button>
+                  <button
+                    className="p-paginator-last p-paginator-element p-link"
+                    disabled={false}
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    <span
+                      className="p-paginator-icon pi pi-step-forward"
+                    />
                   </button>
                 </div>
                  
@@ -115,6 +380,42 @@ Array [
           </div>
         </div>
       </div>
+    </div>
+  </div>,
+  <div
+    className="app__global-loader"
+  >
+    <div
+      aria-busy={true}
+      className="p-progress-spinner"
+      id={null}
+      role="alert"
+      style={
+        Object {
+          "height": "50px",
+          "width": "50px",
+        }
+      }
+    >
+      <svg
+        className="p-progress-spinner-svg"
+        style={
+          Object {
+            "animationDuration": "2s",
+          }
+        }
+        viewBox="25 25 50 50"
+      >
+        <circle
+          className="p-progress-spinner-circle"
+          cx="50"
+          cy="50"
+          fill="none"
+          r="20"
+          strokeMiterlimit="10"
+          strokeWidth="8"
+        />
+      </svg>
     </div>
   </div>,
   <div
