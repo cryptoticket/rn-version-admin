@@ -34,7 +34,8 @@
     "frontend:build": "react-scripts build",
     "frontend:test": "./node_modules/.bin/jest src",
     "backend:live": "./node_modules/.bin/nodemon backend/server/server.js",
-    "backend:test": "./node_modules/.bin/mocha --exit backend/**/*.test.js"
+    "backend:test": "./node_modules/.bin/mocha --exit backend/**/*.test.js",
+    "start": "node backend/server/server.js"
   },
   "eslintConfig": {
     "extends": "react-app"

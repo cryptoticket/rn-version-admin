@@ -114,6 +114,18 @@ REACT_APP_OAUTH_GATE_URL=https://gate-service.com
 10. `rn-version-admin` service redirects user to home page with new JWT token which is used purely in `rn-version-admin`.
 11. User is authorized and can see "versions" page.
 
+## Docker
+### How to run on local machine
+```
+make docker-run
+```
+NOTICE: you need to setup `.env` file in the project root and run mongo db locally as this command attaches container to host network.
+### How to push build to remote docker registry
+```
+make docker-hub-upload HUB=YOUR_USERNAME
+```
+YOUR_USERNAME can be your login from [docker hub](https://hub.docker.com/) or a url to your own docker registry.
+
 
 ## How to run frontend tests
 ```
