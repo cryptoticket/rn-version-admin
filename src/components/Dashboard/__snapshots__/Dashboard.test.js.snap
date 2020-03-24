@@ -212,6 +212,27 @@ Array [
                             <span
                               className="p-column-title"
                             >
+                              Apply from version
+                            </span>
+                          </th>
+                          <th
+                            aria-sort={null}
+                            className=""
+                            colSpan={null}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onDragOver={[Function]}
+                            onDragStart={[Function]}
+                            onDrop={[Function]}
+                            onKeyDown={[Function]}
+                            onMouseDown={[Function]}
+                            rowSpan={null}
+                            style={null}
+                            tabIndex={-1}
+                          >
+                            <span
+                              className="p-column-title"
+                            >
                               Is update required
                             </span>
                           </th>

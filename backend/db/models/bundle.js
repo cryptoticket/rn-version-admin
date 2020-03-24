@@ -41,6 +41,10 @@ const bundleSchema = new Schema({
 	desc: {
 		type: String,
 		default: null
+	},
+	apply_from_version: {
+		type: String,
+		default: null
 	}
 }, { 
 	timestamps: { 

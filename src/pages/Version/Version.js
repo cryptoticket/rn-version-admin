@@ -7,6 +7,7 @@ import { Dropdown } from 'primereact/dropdown';
 import  { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import React from 'reactn';
+import semver from 'semver';
 
 import { api } from '../../lib';
 
@@ -19,6 +20,7 @@ export default class Version extends React.Component {
 		bundles: [],
 		isDeleteDialogVisible: false,
 		isDialogVisible: false,
+		isEditFormValid: false,
 		latestBundleAndroid: {},
 		latestBundleIos: {},
 		paginationCurrentPage: 0,
@@ -68,7 +70,7 @@ export default class Version extends React.Component {
 	 */
 	getDialogFooter = () => {
 		return (<div>
-			<Button label="Save" icon="pi pi-check" onClick={this.onSaveClick} />
+			<Button label="Save" icon="pi pi-check" onClick={this.onSaveClick} disabled={!this.state.isEditFormValid} />
 			<Button label="Cancel" icon="pi pi-times" onClick={() => this.setState({isDialogVisible: false})} className="p-button-secondary" />
 		</div>);
 	};
@@ -110,7 +112,7 @@ export default class Version extends React.Component {
 		this.setState({
 			isDialogVisible: true,
 			selectedBundle: rowData
-		});
+		}, this.validateEditForm);
 	};
 
 	/**
@@ -132,6 +134,24 @@ export default class Version extends React.Component {
 	};
 
 	/**
+	 * Validates edit form
+	 */
+	validateEditForm = () => {
+		// check that apply from version is not in semver format
+		if(!semver.valid(this.state.selectedBundle.apply_from_version)) {
+			this.setState({ isEditFormValid: false });
+			return;
+		}
+		// check that apply from version is less than existing bundle version
+		if(!semver.lt(this.state.selectedBundle.apply_from_version, this.state.selectedBundle.version)) {
+			this.setState({ isEditFormValid: false });
+			return;
+		}
+		// by default form is valid
+		this.setState({ isEditFormValid: true });
+	};
+
+	/**
 	 * Renders JSX template
 	 * @return {Object} JSX template
 	 */
@@ -150,6 +170,7 @@ export default class Version extends React.Component {
 					<DataTable value={this.state.bundles}>
 						<Column field="platform" header="Platform" />
 						<Column field="version" header="Version" />
+						<Column field="apply_from_version" header="Apply from version" />
 						<Column field="is_update_required" header="Is update required" body={(rowData) => String(rowData['is_update_required'])} />
 						<Column field="storage" header="Storage type" />
 						<Column field="desc" header="Description" />
@@ -185,6 +206,17 @@ export default class Version extends React.Component {
 										value={this.state.selectedBundle.is_update_required} 
 										options={[{label: 'Yes', value: true}, {label: 'No', value: false}]} 
 										onChange={(e) => this.setState({selectedBundle: {...this.state.selectedBundle, ...{is_update_required: e.target.value}}})} 
+									/>
+								</div>
+							</div>
+							<div>
+								<div>
+									Apply from version
+								</div>
+								<div>
+									<InputText 
+										value={this.state.selectedBundle.apply_from_version} 
+										onChange={(e) => this.setState({selectedBundle: {...this.state.selectedBundle, ...{apply_from_version: e.target.value}}}, this.validateEditForm)} 
 									/>
 								</div>
 							</div>

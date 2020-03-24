@@ -4,6 +4,7 @@
 
 const fs = require('fs');
 const pump = require('pump');
+const semver = require('semver');
 const Readable = require('stream').Readable;
 
 async function routes(fastify, options) {
@@ -36,6 +37,7 @@ async function routes(fastify, options) {
 						version: { type: 'string' },
 						is_update_required: { type: 'boolean' },
 						url: { type: 'string' },
+						apply_from_version: { type: 'string' },
 						created_at: { type: 'string' },
 						updated_at: { type: 'string' }
 					}
@@ -96,6 +98,7 @@ async function routes(fastify, options) {
 						is_update_required: { type: 'boolean' },
 						url: { type: 'string' },
 						desc: { type: 'string' },
+						apply_from_version: { type: 'string' },
 						created_at: { type: 'string' },
 						updated_at: { type: 'string' }
 					}
@@ -194,6 +197,7 @@ async function routes(fastify, options) {
 							version: { type: 'string' },
 							is_update_required: { type: 'boolean' },
 							url: { type: 'string' },
+							apply_from_version: { type: 'string' },
 							created_at: { type: 'string' },
 							updated_at: { type: 'string' }
 						}
@@ -224,10 +228,14 @@ async function routes(fastify, options) {
 		schema: {
 			body: {
 				type: 'object',
-				required: ['is_update_required'],
+				required: ['is_update_required', 'apply_from_version'],
 				properties: {
 					is_update_required: {
 						type: 'boolean'
+					},
+					apply_from_version: {
+						type: 'string',
+						pattern: '^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$'
 					},
 					desc: {
 						type: 'string'
@@ -255,6 +263,7 @@ async function routes(fastify, options) {
 						version: { type: 'string' },
 						is_update_required: { type: 'boolean' },
 						url: { type: 'string' },
+						apply_from_version: { type: 'string' },
 						created_at: { type: 'string' },
 						updated_at: { type: 'string' }
 					}
@@ -274,12 +283,18 @@ async function routes(fastify, options) {
 		], 
 	}, async function (request, reply) {
 		const bundle = await Bundle.findById(request.params.id);
+		// check that apply_from_version is less than existing bundle version
+		if(!semver.lt(request.body.apply_from_version, bundle.version)) {
+			reply.code(400).send({error: `Apply from version ${request.body.apply_from_version} should be less than existing bundle version ${bundle.version}`});
+			return;
+		}
 		// if we are enabling "is_update_required" then disable any other required updates for the platform
 		if(request.body.is_update_required) {
 			await Bundle.updateMany({platform: bundle.platform}, {is_update_required: false});
 		}
 		// update bundle
 		bundle.is_update_required = request.body.is_update_required;
+		bundle.apply_from_version = request.body.apply_from_version;
 		bundle.desc = request.body.desc;
 		await bundle.save();
 		reply.send(bundle);

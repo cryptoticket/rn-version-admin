@@ -34,7 +34,8 @@ exports[`Version component getDeleteDialogFooter() should render delete dialog f
 exports[`Version component getDialogFooter() should render user dialog footer 1`] = `
 <div>
   <button
-    className="p-button p-component p-button-text-icon-left"
+    className="p-button p-component p-button-text-icon-left p-disabled"
+    disabled={true}
     onClick={[Function]}
   >
     <span
@@ -177,6 +178,27 @@ exports[`Version component render() should render component 1`] = `
                       className="p-column-title"
                     >
                       Version
+                    </span>
+                  </th>
+                  <th
+                    aria-sort={null}
+                    className=""
+                    colSpan={null}
+                    onClick={[Function]}
+                    onDragLeave={[Function]}
+                    onDragOver={[Function]}
+                    onDragStart={[Function]}
+                    onDrop={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseDown={[Function]}
+                    rowSpan={null}
+                    style={null}
+                    tabIndex={-1}
+                  >
+                    <span
+                      className="p-column-title"
+                    >
+                      Apply from version
                     </span>
                   </th>
                   <th

@@ -415,7 +415,7 @@ describe('bundles API tests', () => {
 			return request(fastify.server)
 				.patch(`${API_PREFIX}/bundles/${bundleV1.id}`)
 				.set('Authorization', `Bearer ${adminToken}`)
-				.send({})
+				.send({apply_from_version: '1.0.0'})
 				.expect((resp) => {
 					assert.equal(resp.body.message, "body should have required property 'is_update_required'");
 				})
@@ -426,9 +426,51 @@ describe('bundles API tests', () => {
 			return request(fastify.server)
 				.patch(`${API_PREFIX}/bundles/${bundleV1.id}`)
 				.set('Authorization', `Bearer ${adminToken}`)
-				.send({is_update_required: 'INVALID'})
+				.send({
+					is_update_required: 'INVALID',
+					apply_from_version: '1.0.0'
+				})
 				.expect((resp) => {
 					assert.equal(resp.body.message, "body.is_update_required should be boolean");
+				})
+				.expect(400);
+		});
+
+		it('should return 400 error if apply_from_version field was not set', () => {
+			return request(fastify.server)
+				.patch(`${API_PREFIX}/bundles/${bundleV1.id}`)
+				.set('Authorization', `Bearer ${adminToken}`)
+				.send({is_update_required: true})
+				.expect((resp) => {
+					assert.equal(resp.body.message, "body should have required property 'apply_from_version'");
+				})
+				.expect(400);
+		});
+
+		it('should return 400 error if apply_from_version field is invalid', () => {
+			return request(fastify.server)
+				.patch(`${API_PREFIX}/bundles/${bundleV1.id}`)
+				.set('Authorization', `Bearer ${adminToken}`)
+				.send({
+					is_update_required: true,
+					apply_from_version: 'INVALID'
+				})
+				.expect((resp) => {
+					assert.equal(resp.body.message, "body.apply_from_version should match pattern \"^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$\"");
+				})
+				.expect(400);
+		});
+
+		it('should return 400 error if apply_from_version is not less than existing bundle version', () => {
+			return request(fastify.server)
+				.patch(`${API_PREFIX}/bundles/${bundleV1.id}`)
+				.set('Authorization', `Bearer ${adminToken}`)
+				.send({
+					is_update_required: true,
+					apply_from_version: '1.0.0'
+				})
+				.expect((resp) => {
+					assert.equal(resp.body.error, "Apply from version 1.0.0 should be less than existing bundle version 1.0.0");
 				})
 				.expect(400);
 		});
@@ -441,7 +483,10 @@ describe('bundles API tests', () => {
 			return request(fastify.server)
 				.patch(`${API_PREFIX}/bundles/${bundleV2.id}`)
 				.set('Authorization', `Bearer ${adminToken}`)
-				.send({is_update_required: true})
+				.send({
+					is_update_required: true,
+					apply_from_version: '1.0.0'
+				})
 				.expect((resp) => {
 					assert.equal(resp.body.is_update_required, true);
 				})
@@ -454,11 +499,16 @@ describe('bundles API tests', () => {
 
 		it('should return 200 and update bundle', async () => {
 			return request(fastify.server)
-				.patch(`${API_PREFIX}/bundles/${bundleV1.id}`)
+				.patch(`${API_PREFIX}/bundles/${bundleV2.id}`)
 				.set('Authorization', `Bearer ${adminToken}`)
-				.send({is_update_required: true, desc: 'ANY_DESC'})
+				.send({
+					is_update_required: true,
+					apply_from_version: '1.0.0', 
+					desc: 'ANY_DESC'
+				})
 				.expect((resp) => {
 					assert.equal(resp.body.is_update_required, true);
+					assert.equal(resp.body.apply_from_version, '1.0.0');
 					assert.equal(resp.body.desc, 'ANY_DESC');
 				})
 				.expect(200);

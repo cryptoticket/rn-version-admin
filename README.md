@@ -60,7 +60,7 @@ Now your service should be running(if you used environment variables from this s
 5. Now you should setup bundle upload. Imagine that you have a CI service that creates app js bundle on every commit. Every user has an API key(check the frontend dashboard). This API key is used for bundle upload and should be added to `Authorization` header. Example: `Authorization: Bearer API_KEY_FROM_DASHBOARD`. You can upload every new bundle with new version via the following API: `/api/v1/bundles`. Just send POST multipart-form-data request with the following body:
 - **platform**: bundle platform. Available values: `ios` and `android`.
 - **storage**: storage type. Available values: `file` and `aws_s3`. If you set the `file` storage then bundle will be saved locally on the server. If you set `aws_s3` storage then bundle will be saved to AWS S3 storage(don't forget to setup environment variables for AWS).
-- **is_update_required**: whether app update is required. Available values: `true` and `false`. By default your app shouldn't dynamically update the bundle. It is better to update bundle only for hot fixing. So if this param is set to `false` then bundle should be downloaded but not set as active. If this param is set to `true` then `is_update_required` field for all other bundles of the same platform will be set to `false` and the newly uploaded bundle should be set as active inside your app.
+- **is_update_required**: whether app update is required. Available values: `true` and `false`. By default it should be set to `false` on bundle creation. You can set it to `true` later in admin UI.
 - **bundle**: JS bundle file.
 - **desc**(options): bundle description.
 
@@ -74,12 +74,14 @@ Example response:
     "is_update_required": false,
     "url": "http://localhost:3000/static/bundles/1.0.0/android.bundle",
     "desc": "test",
+    "apply_from_version": "",
     "created_at": "2020-02-28T22:42:12.005Z",
     "updated_at": "2020-02-28T22:42:12.005Z"
 }
 ```
 
 6. Add [@cryptoticket/react-native-hot-patching](https://github.com/cryptoticket/react-native-hot-patching) to your react native app. This package works with `rn-version-admin` service out-of-the-box.
+7. Now you can enable bundles in the "Versions" page in admin UI. For example you have 3 versions uploaded with `is_update_required=false`: `1.0.0`, `1.1.0` and `1.2.0`. If you set `is_update_required=true` and `apply_from_version=1.1.0` for bundle `1.2.0` then apps with versions >= `1.1.0` will be updated to version `1.2.0` via hot patching. We need `apply_from_version` param because **only none native changes can be applied** via hot patching. So **BE CAREFUL** as bundles with native code changes will crash your app. 
 
 ## Auth via 3rd party sevice
 

@@ -2,6 +2,7 @@ import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import React from 'reactn';
 import renderer from 'react-test-renderer';
+import semver from 'semver';
 
 import { api } from '../../lib';
 import Version from './Version';
@@ -150,9 +151,11 @@ describe('Version component', () => {
 		it('should show edit dialog', () => {
 			const wrapper = shallow(<Version />);
 			const instance = wrapper.instance();
+			instance.validateEditForm = jest.fn();
 			instance.onEditClick({id: 1});
 			expect(instance.state.isDialogVisible).toEqual(true);
 			expect(instance.state.selectedBundle).toEqual({id: 1});
+			expect(instance.validateEditForm).toHaveBeenCalled();
 		});
 	});
 
@@ -188,6 +191,53 @@ describe('Version component', () => {
 			});
 			await instance.onSaveClick();
 			expect(instance.global.growl.show).toHaveBeenCalledWith({severity: 'error', summary: 'Error', detail: 'Error on updating bundle'});
+		});
+	});
+
+	describe('validateEditForm()', () => {
+		it('should set edit form validity to false if apply_from_version is not in semver format', () => {
+			const wrapper = shallow(<Version />);
+			const instance = wrapper.instance();
+			instance.setState({
+				selectedBundle: {
+					apply_from_version: 'INVALID'
+				}
+			});
+			semver.valid = jest.fn();
+			instance.validateEditForm();
+			expect(semver.valid).toHaveBeenCalledWith('INVALID');
+			expect(instance.state.isEditFormValid).toEqual(false);
+		});
+
+		it('should set edit form validity to false if apply_from_version is less than existing bundle version', () => {
+			const wrapper = shallow(<Version />);
+			const instance = wrapper.instance();
+			instance.setState({
+				selectedBundle: {
+					apply_from_version: '1.0.0',
+					version: '1.0.0'
+				}
+			});
+			semver.valid = jest.fn(() => true); // NOTICE: this is a workaround as previous test's semver mock is somehow not reset
+			semver.lt = jest.fn();
+			instance.validateEditForm();
+			expect(semver.lt).toHaveBeenCalledWith('1.0.0', '1.0.0');
+			expect(instance.state.isEditFormValid).toEqual(false);
+		});
+
+		it('should set edit form validity to true if form is valid', () => {
+			const wrapper = shallow(<Version />);
+			const instance = wrapper.instance();
+			instance.setState({
+				selectedBundle: {
+					apply_from_version: '1.0.0',
+					version: '1.0.1'
+				}
+			});
+			semver.valid = jest.fn(() => true); // NOTICE: this is a workaround as previous test's semver mock is somehow not reset
+			semver.lt = jest.fn(() => true); // NOTICE: this is a workaround as previous test's semver mock is somehow not reset
+			instance.validateEditForm();
+			expect(instance.state.isEditFormValid).toEqual(true);
 		});
 	});
 
