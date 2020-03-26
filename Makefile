@@ -1,7 +1,7 @@
 PROJECT ?= rn-version-admin
 # your username from hub.docker.com or your custom docker hub url(ex: custom-docker-hub.com)
 HUB ?= 
-# build postfix, examples: "develop", "stage", "master", etc...
+# build postfix, examples: "/develop", "/stage", "/master", etc...
 BUILD_POSTFIX ?=
 
 # run locally

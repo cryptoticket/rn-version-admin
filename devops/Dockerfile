@@ -11,5 +11,7 @@ COPY package.json /app
 RUN npm install
 COPY . /app
 
+EXPOSE 8081
+
 # Default command
 ENTRYPOINT ["/app/devops/entrypoint.sh"]
