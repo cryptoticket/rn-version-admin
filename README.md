@@ -3,7 +3,7 @@
 Web service where you can upload react native app js bundles for future dynamic bundle updates inside your app. App reviews in App Store and Google Play may take a long time so it might be handy to update bundles immediately. So this service is a light version of [CodePush](https://microsoft.github.io/code-push/).
 
 ## Possible workflow
-1. Upload your app js bundle to the service (manually or via any CI tool).
+1. Upload your app bundle(JS file with assets) to the service (manually or via any CI tool).
 2. Add [@cryptoticket/react-native-hot-patching](https://github.com/cryptoticket/react-native-hot-patching) to your react native app. This package will: 
 	- check via `rn-version-admin` API if there are any new bundles available
 	- download bundle in background
@@ -57,11 +57,13 @@ npm run backend:live
 
 Now your service should be running(if you used environment variables from this setup) at `http://localhost:3000`. You should be able to login and manage users and bundles.
 
-5. Now you should setup bundle upload. Imagine that you have a CI service that creates app js bundle on every commit. Every user has an API key(check the frontend dashboard). This API key is used for bundle upload and should be added to `Authorization` header. Example: `Authorization: Bearer API_KEY_FROM_DASHBOARD`. You can upload every new bundle with new version via the following API: `/api/v1/bundles`. Just send POST multipart-form-data request with the following body:
+5. Now you should setup bundle upload. Imagine that you have a CI service that creates app bundle(JS file with assets) on every commit. Every user has an API key(check the frontend dashboard). This API key is used for bundle upload and should be added to `Authorization` header. Example: `Authorization: Bearer API_KEY_FROM_DASHBOARD`. You can upload every new bundle with new version via the following API: `/api/v1/bundles`. Just send POST multipart-form-data request with the following body:
 - **platform**: bundle platform. Available values: `ios` and `android`.
 - **storage**: storage type. Available values: `file` and `aws_s3`. If you set the `file` storage then bundle will be saved locally on the server. If you set `aws_s3` storage then bundle will be saved to AWS S3 storage(don't forget to setup environment variables for AWS).
 - **is_update_required**: whether app update is required. Available values: `true` and `false`. By default it should be set to `false` on bundle creation. You can set it to `true` later in admin UI.
-- **bundle**: JS bundle file.
+- **bundle**: zipped bundle file. So you should run `react-native bundle`, create zip archive from bundle and upload the archive. Example commands of how to create bundles(you should archive `bundle/android` or `bundle/ios` folder):
+  - android: `react-native bundle --entry-file index.js --platform android --dev false --bundle-output ./bundle/android/android.bundle --assets-dest ./bundle/android`
+  - ios: `react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ./bundle/ios/ios.bundle --assets-dest ./bundle/ios`
 - **desc**(options): bundle description.
 
 Example response:
@@ -72,7 +74,7 @@ Example response:
     "storage": "file",
     "version": "1.0.0",
     "is_update_required": false,
-    "url": "http://localhost:3000/static/bundles/1.0.0/android.bundle",
+    "url": "http://localhost:3000/static/bundles/1.0.0/android.bundle.zip",
     "desc": "test",
     "apply_from_version": "",
     "created_at": "2020-02-28T22:42:12.005Z",

@@ -324,11 +324,11 @@ describe('bundles API tests', () => {
 				.attach('bundle', __filename)
 				.expect(200)
 				.expect((resp) => {
-					assert.equal(fs.existsSync(`${__dirname}/../../../static/bundles/1.0.0/android.bundle`), true);
+					assert.equal(fs.existsSync(`${__dirname}/../../../static/bundles/1.0.0/android.bundle.zip`), true);
 				})
 				.then(async () => {
 					await Bundle.deleteOne({platform: 'android', version: '1.0.0'});
-					fs.unlinkSync(`${__dirname}/../../../static/bundles/1.0.0/android.bundle`);
+					fs.unlinkSync(`${__dirname}/../../../static/bundles/1.0.0/android.bundle.zip`);
 					fs.rmdirSync(`${__dirname}/../../../static/bundles/1.0.0`);
 				});
 		});
@@ -545,7 +545,7 @@ describe('bundles API tests', () => {
 			await bundle.save();
 			// copy bundle file to target folder
 			fs.mkdirSync(`${__dirname}/../../../static/bundles/1.0.0`);
-			fs.copyFileSync(__filename, `${__dirname}/../../../static/bundles/1.0.0/android.bundle`);
+			fs.copyFileSync(__filename, `${__dirname}/../../../static/bundles/1.0.0/android.bundle.zip`);
 			// delete bundle 
 			return request(fastify.server)
 				.delete(`${API_PREFIX}/bundles/${bundle.id}`)

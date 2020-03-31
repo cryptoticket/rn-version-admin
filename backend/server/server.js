@@ -69,7 +69,7 @@ fastify.get('/static/bundles/:version/:filename', {
 				},
 				filename: {
 					type: 'string',
-					enum: ['android.bundle', 'ios.bundle']
+					enum: ['android.bundle.zip', 'ios.bundle.zip']
 				}
 			}
 		}

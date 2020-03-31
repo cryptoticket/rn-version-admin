@@ -145,9 +145,9 @@ async function routes(fastify, options) {
 			readable.push(request.body.bundle[0].data);
 			readable.push(null);
 			// save file to folder
-			pump(readable, fs.createWriteStream(`${localPath}/${request.body.platform}.bundle`));
+			pump(readable, fs.createWriteStream(`${localPath}/${request.body.platform}.bundle.zip`));
 			// assign url to bundle
-			bundle['url'] = `${process.env.API_URL}/static/bundles/${request.body.version}/${request.body.platform}.bundle`;
+			bundle['url'] = `${process.env.API_URL}/static/bundles/${request.body.version}/${request.body.platform}.bundle.zip`;
 		}
 
 		// if we want to store bundle on AWS S3
@@ -155,7 +155,7 @@ async function routes(fastify, options) {
 			// upload file to AWS S3
 			const uploadParams = {
 				Bucket: process.env.AWS_S3_BUCKET, 
-				Key: `bundles/${request.body.version}/${request.body.platform}.bundle`, 
+				Key: `bundles/${request.body.version}/${request.body.platform}.bundle.zip`, 
 				Body: request.body.bundle[0].data
 			};
 			const resp = await fastify.aws_s3.upload(uploadParams).promise();
@@ -338,7 +338,7 @@ async function routes(fastify, options) {
 		// if storage type is "file" then delete file from our server
 		if(bundle.storage === 'file') {
 			const folderPath = `${__dirname}/../../static/bundles/${bundle.version}`;
-			const filePath = `${folderPath}/${bundle.platform}.bundle`;
+			const filePath = `${folderPath}/${bundle.platform}.bundle.zip`;
 			fs.unlinkSync(filePath);
 			const folderFiles = fs.readdirSync(folderPath);
 			// if there are not files in version folder then delete folder
@@ -351,7 +351,7 @@ async function routes(fastify, options) {
 		if(bundle.storage === 'aws_s3') {
 			await fastify.aws_s3.deleteObject({
 				Bucket: process.env.AWS_S3_BUCKET,
-				Key: `bundles/${bundle.version}/${bundle.platform}.bundle`
+				Key: `bundles/${bundle.version}/${bundle.platform}.bundle.zip`
 			}).promise();
 		}
 

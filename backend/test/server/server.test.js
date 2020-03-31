@@ -22,7 +22,7 @@ describe('server API tests', () => {
 	describe('GET /static/bundles/:version/:filename', () => {
 		it('should return 400 error if version is invalid', () => {
 			return request(fastify.server)
-				.get(`/static/bundles/INVALID/android.bundle`)
+				.get(`/static/bundles/INVALID/android.bundle.zip`)
 				.expect((resp) => {
 					assert.equal(resp.body.message, 'params.version should match pattern "^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$"');
 				})
@@ -31,7 +31,7 @@ describe('server API tests', () => {
 
 		it('should return 400 error if filename is invalid', () => {
 			return request(fastify.server)
-				.get(`/static/bundles/1.0.0/INVALAID.bundle`)
+				.get(`/static/bundles/1.0.0/INVALID.bundle.zip`)
 				.expect((resp) => {
 					assert.equal(resp.body.message, 'params.filename should be equal to one of the allowed values');
 				})
@@ -40,20 +40,20 @@ describe('server API tests', () => {
 
 		it('should return 404 error if bundle was not found', () => {
 			return request(fastify.server)
-				.get(`/static/bundles/1.0.0/android.bundle`)
+				.get(`/static/bundles/1.0.0/android.bundle.zip`)
 				.expect(404);
 		});
 
 		it('should return 200 and bundle file', async () => {
 			// create bundle
 			fs.mkdirSync(`${__dirname}/../../static/bundles/1.0.0`);
-			fs.copyFileSync(__filename, `${__dirname}/../../static/bundles/1.0.0/android.bundle`);
+			fs.copyFileSync(__filename, `${__dirname}/../../static/bundles/1.0.0/android.bundle.zip`);
 			// get bundle
 			return request(fastify.server)
-				.get(`/static/bundles/1.0.0/android.bundle`)
+				.get(`/static/bundles/1.0.0/android.bundle.zip`)
 				.expect(200)
 				.then(() => {
-					fs.unlinkSync(`${__dirname}/../../static/bundles/1.0.0/android.bundle`);
+					fs.unlinkSync(`${__dirname}/../../static/bundles/1.0.0/android.bundle.zip`);
 					fs.rmdirSync(`${__dirname}/../../static/bundles/1.0.0`);
 				});
 		});
