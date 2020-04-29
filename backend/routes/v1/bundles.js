@@ -217,7 +217,7 @@ async function routes(fastify, options) {
 			reply.header('X-Page-Last', pageLast);
 		}
 	}, async function (request, reply) {
-		const bundles = await Bundle.find().skip(+process.env.ITEMS_PER_PAGE * request.query.page).limit(+process.env.ITEMS_PER_PAGE).sort({version: 'desc'});
+		const bundles = (await Bundle.find().skip(+process.env.ITEMS_PER_PAGE * request.query.page).limit(+process.env.ITEMS_PER_PAGE).sort({created_at: 'desc'})).sort((a, b) => semver.rcompare(a.version, b.version));
 		reply.send(bundles);
 	});
 
