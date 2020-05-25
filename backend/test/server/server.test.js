@@ -19,6 +19,14 @@ describe('server API tests', () => {
 		});
 	});
 
+	describe('GET /metrics', () => {
+		it('should return 200 with metrics', () => {
+			return request(fastify.server)
+				.get('/metrics')
+				.expect(200);
+		});
+	});
+
 	describe('GET /static/bundles/:version/:filename', () => {
 		it('should return 400 error if version is invalid', () => {
 			return request(fastify.server)

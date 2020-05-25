@@ -1,8 +1,10 @@
 // read ENV variables
 require('dotenv').config();
 
+const expressPrometheusMiddleware = require('express-prometheus-middleware');
 const oauthPlugin = require('fastify-oauth2');
 const path = require('path');
+const promClient = require('prom-client');
 
 // initialize fastify instance
 const fastify = require('fastify')({ logger: true });
@@ -45,6 +47,16 @@ fastify.register(require('../plugins/jwt-auth'));
 // initialize AWS S3
 fastify.register(require('../plugins/aws-s3'));
 
+// enable default metrics
+fastify.use(expressPrometheusMiddleware({
+    metricsPath: '/metrics/default',
+    collectDefaultMetrics: true,
+    requestDurationBuckets: [0.1, 0.5, 1, 3]
+}));
+
+// enable custom metrics
+fastify.register(require('../plugins/monitoring'));
+
 // attach APIs
 fastify.register(require('../routes/v1/auth'), { prefix: '/api/v1' }); // auth API
 fastify.register(require('../routes/v1/bundles'), { prefix: '/api/v1' }); // bundles API
@@ -54,6 +66,17 @@ fastify.register(require('../routes/v1/users'), { prefix: '/api/v1' }); // users
 fastify.register(require('fastify-static'), {
 	root: path.join(__dirname, '../../build'),
 	prefix: '/'
+});
+
+// monitoring metrics path
+fastify.get('/metrics', async function (request, reply) {
+	try {
+		await fastify.monitoring.refreshCustomMetrics();
+	} catch(err) {
+		console.log(err);
+	} finally {
+		reply.send(promClient.register.metrics());
+	}
 });
 
 // serve static bundles

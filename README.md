@@ -130,6 +130,8 @@ make docker-hub-upload HUB=YOUR_USERNAME
 ```
 YOUR_USERNAME can be your login from [docker hub](https://hub.docker.com/) or a url to your own docker registry.
 
+## Monitoring
+By default API route `/metrics` exposes default metrics: RAM, CPU, SWAP, requests, errors and request durations.
 
 ## How to run frontend tests
 ```
