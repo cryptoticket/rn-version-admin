@@ -6,6 +6,14 @@ const fastifyPlugin = require('fastify-plugin');
 const promClient = require('prom-client');
 const sysInfo = require('systeminformation');
 
+// timestamp when service went online
+const SERVICE_STARTED_AT = Math.floor((new Date()).getTime() / 1000);
+// how often to reset metrics
+const TIMEOUT_RESET_METRICS_SECONDS = 86400;
+
+// timestamp when was the last metrics reset
+let lastMetricsResetAt = null;
+
 // basic metrics
 let gaugeCpuLoad = null;
 let gaugeMemUsed = null;
@@ -35,6 +43,8 @@ async function main(fastify, options) {
  * Refreshes values for all custom metrics
  */
 async function refreshCustomMetrics() {
+    // reset metrics
+    resetMetricsIfNeeded();
     // basic metrics
     gaugeCpuLoad.set((await sysInfo.currentLoad()).currentload, Date.now());
     gaugeMemUsed.set((await sysInfo.mem()).used, Date.now());
@@ -43,6 +53,18 @@ async function refreshCustomMetrics() {
     gaugeSwapTotal.set((await sysInfo.mem()).swaptotal, Date.now());
     gaugeNetworkConnectionsAll.set((await sysInfo.networkConnections()).length, Date.now());
     gaugeUptime.set((await sysInfo.time()).uptime, Date.now());
+}
+
+/**
+ * Removes metrics from RAM(if needed) because metrics can load server heavily
+ */
+function resetMetricsIfNeeded() {
+    const now = Math.floor((new Date()).getTime() / 1000);
+    const lastMetricsResetOrStart = lastMetricsResetAt || SERVICE_STARTED_AT;
+    if ((now - lastMetricsResetOrStart) > TIMEOUT_RESET_METRICS_SECONDS) {
+        lastMetricsResetAt = now;
+        promClient.register.resetMetrics();
+    }
 }
 
 // Wrapping a plugin function with fastify-plugin exposes the decorators,
