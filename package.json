@@ -17,7 +17,7 @@
     "fastify-multipart": "^1.0.4",
     "fastify-oauth2": "^3.0.0",
     "fastify-plugin": "^1.6.0",
-    "fastify-static": "^2.6.0",
+    "fastify-static": "^4.2.4",
     "mongoose": "^5.8.11",
     "primeflex": "^1.0.0",
     "primeicons": "^2.0.0",
