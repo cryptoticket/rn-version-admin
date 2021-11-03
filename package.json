@@ -31,7 +31,7 @@
     "reactn": "^2.2.5",
     "semver": "^7.1.3",
     "systeminformation": "^4.26.4",
-    "validator": "^12.2.0"
+    "validator": "^13.7.0"
   },
   "scripts": {
     "frontend:start": "react-scripts start",
